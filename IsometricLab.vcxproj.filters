@@ -19,12 +19,15 @@
     <Filter Include="Isometric">
       <UniqueIdentifier>{9d01d137-f4b3-4ec9-8b55-5d7e0db2ae51}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Application">
+      <UniqueIdentifier>{d002a08d-d373-4f49-b110-66e1e4eddd41}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Graphics">
+      <UniqueIdentifier>{3b67e27b-06b8-4128-9998-6a368fe1271b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.old.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="camera.cpp">
@@ -44,6 +47,15 @@
     </ClCompile>
     <ClCompile Include="world.cpp">
       <Filter>Isometric</Filter>
+    </ClCompile>
+    <ClCompile Include="application.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="graphics.cpp">
+      <Filter>Graphics</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -75,6 +87,15 @@
     </ClInclude>
     <ClInclude Include="camera.h">
       <Filter>Isometric</Filter>
+    </ClInclude>
+    <ClInclude Include="application.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="application_setup.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics.h">
+      <Filter>Graphics</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
