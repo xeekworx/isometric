@@ -148,6 +148,7 @@
     <ClCompile Include="application.cpp" />
     <ClCompile Include="camera.cpp" />
     <ClCompile Include="graphics.cpp" />
+    <ClCompile Include="input.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="main.old.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -155,6 +156,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="module.cpp" />
     <ClCompile Include="random.cpp" />
     <ClCompile Include="tile_image.cpp" />
     <ClCompile Include="tile_map.cpp" />
@@ -171,7 +173,10 @@
     <ClInclude Include="application.h" />
     <ClInclude Include="application_setup.h" />
     <ClInclude Include="camera.h" />
+    <ClInclude Include="framerate.h" />
     <ClInclude Include="graphics.h" />
+    <ClInclude Include="input.h" />
+    <ClInclude Include="module.h" />
     <ClInclude Include="random.h" />
     <ClInclude Include="tile.h" />
     <ClInclude Include="tile_image.h" />

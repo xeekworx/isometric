@@ -57,6 +57,12 @@
     <ClCompile Include="graphics.cpp">
       <Filter>Graphics</Filter>
     </ClCompile>
+    <ClCompile Include="module.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="input.cpp">
+      <Filter>Application</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -96,6 +102,15 @@
     </ClInclude>
     <ClInclude Include="graphics.h">
       <Filter>Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="module.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="framerate.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="input.h">
+      <Filter>Application</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

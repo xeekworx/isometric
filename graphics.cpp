@@ -1,4 +1,5 @@
 #include "graphics.h"
+#include <algorithm>
 
 using namespace isometric;
 
@@ -30,4 +31,9 @@ void graphics::clear(uint32_t color) const
     );
 
     SDL_RenderClear(renderer);
+}
+
+void graphics::present() const
+{
+    SDL_RenderPresent(renderer);
 }

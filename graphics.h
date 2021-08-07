@@ -9,9 +9,10 @@ namespace isometric {
     {
         friend class application;
     private:
-        SDL_Renderer* renderer = nullptr;
+        SDL_Renderer * renderer = nullptr;
 
         graphics(SDL_Renderer* renderer);
+        void present() const;
 
     public:
 

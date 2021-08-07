@@ -6,23 +6,16 @@
 
 using namespace isometric;
 
-bool application::application_exists = false;
+std::shared_ptr<application> application::this_app = nullptr;
 
-application::application(const application_setup setup) : setup(setup)
+application::application()
 {
-    if (application_exists) {
-        SDL_Log("Application instance already exists when creating '%s'", setup.name.c_str());
-        throw std::exception("Application instance already exists");
-    }
-    else {
-        application_exists = true;
-        SDL_Log("Application [%s] constructed", setup.name.c_str());
-    }
+    SDL_LogVerbose(SDL_LOG_CATEGORY_APPLICATION, "Application constructed");
 }
 
 application::~application()
 {
-    SDL_Log("Application destructed");
+    SDL_LogVerbose(SDL_LOG_CATEGORY_APPLICATION, "Application destructed");
 }
 
 const application_setup& application::get_setup() const
@@ -34,17 +27,36 @@ bool application::start()
 {
     SDL_Log("Application [%s] starting", setup.name.c_str());
 
-    if (!initialize()) return false;
-    main_loop();
+    if (initialize()) {
+        if (!on_start()) {
+            SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, "Application's [%s] on_start returned false", setup.name.c_str());
+        }
+        else {
+            main_loop();
+        }
+    }
 
-    SDL_Log("Destroying SDL renderer");
+    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "Calling shutdown event");
+    on_shutdown();
+
+    if (setup.broadcast_fps) {
+        SDL_LogVerbose(SDL_LOG_CATEGORY_APPLICATION, "Minimum FPS: %.02f, Maximum FPS: %0.2f",
+            current_fps.get_minimum(), current_fps.get_maximum());
+    }
+
+    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "Unregistering %llu modules", modules.size());
+    unregister_all_modules();
+
+    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "Destroying SDL renderer");
     graphics->renderer = nullptr;
     if (renderer) SDL_DestroyRenderer(renderer);
 
-    SDL_Log("Closing window");
+    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "Closing window");
     if (window) SDL_DestroyWindow(window);
 
-    SDL_Log("Shutting down SDL");
+    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "Shutting down SDL");
+    TTF_Quit();
+    IMG_Quit();
     SDL_Quit();
 
     SDL_Log("Application [%s] shutdown", setup.name.c_str());
@@ -53,17 +65,18 @@ bool application::start()
 
 void application::shutdown()
 {
+    SDL_LogVerbose(SDL_LOG_CATEGORY_APPLICATION, "application::shutdown called > should_exit before call = %s", 
+        should_exit ? "true" : "false");
+
     should_exit = true;
 }
 
 void application::main_loop()
 {
-    // Setup the initial beforeTime before the game loop starts up...
-    // SDL_GetPerformanceCounter is in a unit of measurement only meaningful to this computer
-    // SDL_GetPerformanceFrequency is a value to divide by to convert the counter to seconds
-    double beforeTime = (double)SDL_GetPerformanceCounter() / SDL_GetPerformanceFrequency();
-
     SDL_Event e = {};
+
+    // Setup the initial beforeTime before the game loop starts up...
+    double before_time = (double)SDL_GetPerformanceCounter() / SDL_GetPerformanceFrequency();
 
     while (!should_exit) {
         while (SDL_PollEvent(&e)) {
@@ -74,27 +87,95 @@ void application::main_loop()
         }
 
         // Calculate delta time...
-        // Get the current time by querying the performance counter and using the performance frequency to give it 
-        // meaning (convert it to seconds)
-        double currentTime = (double)SDL_GetPerformanceCounter() / SDL_GetPerformanceFrequency();
-        float deltaTime = static_cast<float>(currentTime - beforeTime);
-        beforeTime = currentTime; // Prime beforeTime for the next frame
+        double current_time = (double)SDL_GetPerformanceCounter() / SDL_GetPerformanceFrequency(); // Seconds
+        double delta_time = static_cast<float>(current_time - before_time); // Seconds since last frame
+        before_time = current_time; // Prime before_time for the next frame
 
-        if (!on_render(deltaTime)) {
-            SDL_Log("Rendering requested shutdown");
-            shutdown();
-        }
+        // Calculate framerate...
+        // Fixed framerate is determined by try_call_fixed_udpate() later
+        current_fps.set_from_delta(delta_time);
+
+        try_call_fixed_update(delta_time);
+        on_update(delta_time);
+
+        if (setup.broadcast_fps) broadcast_fps(delta_time);
     }
 }
 
-bool application::on_render(float delta_time)
+void application::broadcast_fps(double delta_time) const
+{
+    static double time_since_last_update = 0.0;
+    time_since_last_update += delta_time;
+
+    if (time_since_last_update >= setup.broadcast_fps_elapsed /* seconds */) {
+        time_since_last_update = 0.0;
+
+        SDL_LogVerbose(SDL_LOG_CATEGORY_APPLICATION, "Current FPS: %.02f, Current Fixed FPS: %0.2f", 
+            current_fps.get(), current_fixed_fps.get());
+
+        SDL_LogVerbose(SDL_LOG_CATEGORY_APPLICATION, "Average FPS: %.02f, Average Fixed FPS: %0.2f",
+            current_fps.get_average(), current_fixed_fps.get_average());
+    }
+}
+
+void application::try_call_fixed_update(double delta_time)
+{
+    static double before_time = (double)SDL_GetPerformanceCounter() / SDL_GetPerformanceFrequency();
+
+    constexpr int max_steps = 5; // Maximum number of steps, to avoid degrading to an halt.
+    static double fixed_timestep = 1.0 / setup.fixed_update_fps;
+    static double fixed_update_accumulator = 0.0;
+    static double fixed_update_accumulator_ratio = 0.0;
+
+    fixed_update_accumulator += delta_time;
+    const int steps = static_cast<int>(std::floor(fixed_update_accumulator / fixed_timestep));
+
+    // To avoid rounding errors, touches fixed_update_accumulator only if needed.
+    if (steps > 0)
+    {
+        fixed_update_accumulator -= steps * fixed_timestep;
+    }
+
+    fixed_update_accumulator_ratio = fixed_update_accumulator / fixed_timestep;
+
+    // This is similar to clamp "dt":  dt = std::min (dt, MAX_STEPS * FIXED_TIMESTEP)
+    // but it allows above calculations of fixedTimestepAccumulator_ and fixed_update_accumulator_ratio to remain 
+    // unchanged.
+    const int steps_clamped = std::min(steps, max_steps);
+    for (int i = 0; i < steps_clamped; i++)
+    {
+        double current_time = (double)SDL_GetPerformanceCounter() / SDL_GetPerformanceFrequency();
+        double fixed_delta_time = static_cast<float>(current_time - before_time);
+        before_time = current_time; // Prime before_time for the next frame
+
+        current_fixed_fps.set_from_delta(fixed_delta_time);
+        on_fixed_update(fixed_delta_time);
+    }
+}
+
+void application::on_fixed_update(double fixed_delta_time)
+{
+    for (auto& m : modules) {
+        if (m && m->is_enabled()) m->on_fixed_update(fixed_delta_time);
+    }
+}
+
+void application::on_update(double delta_time)
 {
     graphics->clear(setup.background_color);
 
+    for (auto& m : modules) {
+        if (m && m->is_enabled()) m->on_update(delta_time);
+    }
 
+    for (auto& m : modules) {
+        if (m && m->is_enabled()) m->on_late_update(delta_time);
+    }
 
-    SDL_RenderPresent(renderer);
-    return true;
+    // If you get the following error in the log or console from SDL it means there wasn't enough drawn to enable
+    // SDL's internal batching. This error can be ignored.
+    // ERROR: SDL failed to get a vertex buffer for this Direct3D 9 rendering batch!
+    graphics->present();
 }
 
 bool application::on_event(const SDL_Event& e)
@@ -116,35 +197,63 @@ bool application::on_event(const SDL_Event& e)
 
 std::shared_ptr<graphics> application::get_graphics() const
 {
-    return std::shared_ptr<isometric::graphics>();
+    return graphics;
+}
+
+std::shared_ptr<input> application::get_input() const
+{
+    return input;
 }
 
 bool application::initialize()
 {
-    SDL_Log("Application initializing");
+    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "Application initializing");
+
+    SDL_Log("Current platform: %s", SDL_GetPlatform());
+    SDL_Log("Application architecture: %d-Bit", is_64bit() ? 64 : 32);
+
+    SDL_version sdlvn_built = {}, sdlvn_runtime = {};
+    SDL_VERSION(&sdlvn_built);
+    SDL_GetVersion(&sdlvn_runtime);
+    SDL_Log("Built with SDL version: %d.%d.%d, Using SDL runtime version: %d.%d.%d", 
+        sdlvn_built.major, sdlvn_built.minor, sdlvn_built.patch, 
+        sdlvn_runtime.major, sdlvn_runtime.minor, sdlvn_runtime.patch
+    );
 
     std::stringstream error;
 
     try {
-        SDL_Log("SDL initializing subsystems");
+        // --------------------------------------------------------------------
+        // SDL & EXTENSIONS INIT
+
+        SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "SDL initializing subsystems");
         if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
             error << "Failed to initialize SDL: " << SDL_GetError();
             throw(error.str());
         }
 
-        SDL_Log("SDL_image initializing");
+        SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "SDL_image initializing");
         if (IMG_Init(IMG_INIT_PNG) == 0) {
             error << "Failed to initialize SDL_image: " << IMG_GetError();
             throw(error.str());
         }
 
-        SDL_Log("SDL_ttf initializing");
+        SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "SDL_ttf initializing");
         if (TTF_Init() < 0) {
             error << "Failed to initialize SDL_ttf: " << TTF_GetError();
             throw(error.str());
         }
 
-        SDL_Log("Creating SDL window with the resolution %d x %d", setup.screen_width, setup.screen_height);
+        // --------------------------------------------------------------------
+        // SDL HINTS
+
+        // Allow mouse click events when clicking to focus an SDL window
+        SDL_SetHint(SDL_HINT_MOUSE_FOCUS_CLICKTHROUGH, setup.mouse_focus_clickthrough ? "1" : "0");
+
+        // --------------------------------------------------------------------
+        // SDL_WINDOW
+
+        SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "Creating SDL window with the resolution %d x %d", setup.screen_width, setup.screen_height);
         if ((window = SDL_CreateWindow(
             setup.name.c_str(),
             SDL_WINDOWPOS_CENTERED,
@@ -156,16 +265,18 @@ bool application::initialize()
             throw(error.str());
         }
 
-        SDL_Log("Creating SDL renderer");
-        if ((renderer = SDL_CreateRenderer(window, -1, 0)) == 0) {
+        // --------------------------------------------------------------------
+        // SDL_RENDERER & GRAPHICS
+
+        SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "Creating SDL renderer");
+        Uint32 renderer_flags = setup.vertical_sync ? SDL_RENDERER_PRESENTVSYNC : 0;
+        if ((renderer = SDL_CreateRenderer(window, -1, renderer_flags)) == 0) {
             error << "Failed to create the renderer: " << SDL_GetError();
             throw(std::exception(error.str().c_str()));
         }
 
         this->graphics = std::shared_ptr<isometric::graphics>(new isometric::graphics(renderer));
-
-        // Allow mouse click events when clicking to focus an SDL window
-        SDL_SetHint(SDL_HINT_MOUSE_FOCUS_CLICKTHROUGH, "1");
+        this->input = std::shared_ptr<isometric::input>(new isometric::input());
     }
     catch (std::exception ex)
     {
@@ -174,11 +285,58 @@ bool application::initialize()
         SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, setup.name.c_str(), ex.what(), window);
 
         // Output the error to the console, if you have one
-        SDL_Log(ex.what());
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, ex.what());
         return false;
     }
 
+    initialized = true;
+    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "Finished application initialization");
+    return initialized;
+}
 
-    SDL_Log("Finished application initialization");
+bool application::is_64bit()
+{
+#if UINTPTR_MAX == UINT32_MAX
+    return false;
+#elif UINTPTR_MAX == UINT64_MAX
     return true;
+#else
+    return false;
+#endif
+}
+
+void application::register_module(std::shared_ptr<module> m)
+{
+    modules.push_back(m);
+    m->app = application::this_app;
+
+    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "Module [%s] registered with application [%s]", 
+        m->name.c_str(), setup.name.c_str());
+
+    m->on_registered();
+}
+
+void application::unregister_module(std::shared_ptr<module> m)
+{
+    m->on_unregister();
+
+    m->app = nullptr;
+    modules.remove(m);
+
+    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "Module [%s] unregistered with application [%s]",
+        m->name.c_str(), setup.name.c_str());
+}
+
+void application::unregister_all_modules()
+{
+    auto currente_modules = std::list<std::shared_ptr<module>>(modules.begin(), modules.end());
+
+    for (auto m : currente_modules) {
+        unregister_module(m);
+    }
+}
+
+const std::list<std::shared_ptr<module>>& application::get_modules() const
+{
+    return modules;
 }
