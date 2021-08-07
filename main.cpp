@@ -1,23 +1,8 @@
 #include <memory>
-#include "application.h"
-#include "module.h"
+#include "game_application.h"
 
 using namespace isometric;
-
-class mymodule : public isometric::module {
-
-};
-
-class myapplication : public isometric::application {
-protected:
-    bool on_start() override {
-
-        auto main_module = module::create<mymodule>(true);
-        register_module(main_module);
-
-        return application::on_start();
-    }
-};
+using namespace isometric::game;
 
 int main(int argc, char* argv[])
 {
@@ -30,7 +15,7 @@ int main(int argc, char* argv[])
         setup.vertical_sync = true;
         setup.broadcast_fps = true;
 
-        auto app = application::create<myapplication>(setup);
+        auto app = application::create<game_application>(setup);
 
         app->start();
     }

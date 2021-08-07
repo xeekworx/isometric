@@ -147,6 +147,7 @@
   <ItemGroup>
     <ClCompile Include="application.cpp" />
     <ClCompile Include="camera.cpp" />
+    <ClCompile Include="game_application.cpp" />
     <ClCompile Include="graphics.cpp" />
     <ClCompile Include="input.cpp" />
     <ClCompile Include="main.cpp" />
@@ -156,6 +157,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="main_module.cpp" />
     <ClCompile Include="module.cpp" />
     <ClCompile Include="random.cpp" />
     <ClCompile Include="tile_image.cpp" />
@@ -174,8 +176,10 @@
     <ClInclude Include="application_setup.h" />
     <ClInclude Include="camera.h" />
     <ClInclude Include="framerate.h" />
+    <ClInclude Include="game_application.h" />
     <ClInclude Include="graphics.h" />
     <ClInclude Include="input.h" />
+    <ClInclude Include="main_module.h" />
     <ClInclude Include="module.h" />
     <ClInclude Include="random.h" />
     <ClInclude Include="tile.h" />

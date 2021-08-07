@@ -1,5 +1,5 @@
 #pragma once
-#include <map>
+#include <unordered_map>
 #include <string>
 #include <vector>
 #include <memory>>
@@ -16,10 +16,10 @@ namespace isometric {
         unsigned tile_width = 0;    // by pixels
         unsigned tile_height = 0;   // by pixels
 
-        std::map<unsigned, std::shared_ptr<tile_image>> tile_images;
+        std::unordered_map<unsigned, std::shared_ptr<tile_image>> tile_images;
         unsigned selection_tile_image = std::numeric_limits<unsigned>::max();
-        std::map<std::string, std::vector<tile>> layer_tiles;
-        std::map<std::string, std::vector<unsigned>> layer_default_images;
+        std::unordered_map<std::string, std::vector<tile>> layer_tiles;
+        std::unordered_map<std::string, std::vector<unsigned>> layer_default_images;
         std::vector<std::string> layers;
 
         tile_map() { }

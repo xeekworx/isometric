@@ -25,6 +25,9 @@
     <Filter Include="Graphics">
       <UniqueIdentifier>{3b67e27b-06b8-4128-9998-6a368fe1271b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game">
+      <UniqueIdentifier>{481b0ce7-23d4-4f89-9624-35322d72e271}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.old.cpp">
@@ -62,6 +65,12 @@
     </ClCompile>
     <ClCompile Include="input.cpp">
       <Filter>Application</Filter>
+    </ClCompile>
+    <ClCompile Include="game_application.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="main_module.cpp">
+      <Filter>Game</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -111,6 +120,12 @@
     </ClInclude>
     <ClInclude Include="input.h">
       <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="game_application.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="main_module.h">
+      <Filter>Game</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
