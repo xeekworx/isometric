@@ -17,6 +17,7 @@ namespace isometric {
     public:
 
         void clear(uint32_t color) const;
+        SDL_Renderer* get_renderer() { return renderer; }
 
     };
 

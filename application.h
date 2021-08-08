@@ -1,7 +1,7 @@
 #pragma once
+#include <SDL.h>
 #include <memory>
 #include <list>
-#include <SDL.h>
 #include "application_setup.h"
 #include "graphics.h"
 #include "input.h"

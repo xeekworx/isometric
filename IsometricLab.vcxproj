@@ -149,6 +149,7 @@
     <ClCompile Include="camera.cpp" />
     <ClCompile Include="game_application.cpp" />
     <ClCompile Include="graphics.cpp" />
+    <ClCompile Include="image.cpp" />
     <ClCompile Include="input.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="main.old.cpp">
@@ -178,6 +179,7 @@
     <ClInclude Include="framerate.h" />
     <ClInclude Include="game_application.h" />
     <ClInclude Include="graphics.h" />
+    <ClInclude Include="image.h" />
     <ClInclude Include="input.h" />
     <ClInclude Include="main_module.h" />
     <ClInclude Include="module.h" />

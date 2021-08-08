@@ -22,9 +22,6 @@
     <Filter Include="Application">
       <UniqueIdentifier>{d002a08d-d373-4f49-b110-66e1e4eddd41}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Graphics">
-      <UniqueIdentifier>{3b67e27b-06b8-4128-9998-6a368fe1271b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Game">
       <UniqueIdentifier>{481b0ce7-23d4-4f89-9624-35322d72e271}</UniqueIdentifier>
     </Filter>
@@ -57,9 +54,6 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="graphics.cpp">
-      <Filter>Graphics</Filter>
-    </ClCompile>
     <ClCompile Include="module.cpp">
       <Filter>Application</Filter>
     </ClCompile>
@@ -71,6 +65,12 @@
     </ClCompile>
     <ClCompile Include="main_module.cpp">
       <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="graphics.cpp">
+      <Filter>Isometric</Filter>
+    </ClCompile>
+    <ClCompile Include="image.cpp">
+      <Filter>Isometric</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -109,9 +109,6 @@
     <ClInclude Include="application_setup.h">
       <Filter>Application</Filter>
     </ClInclude>
-    <ClInclude Include="graphics.h">
-      <Filter>Graphics</Filter>
-    </ClInclude>
     <ClInclude Include="module.h">
       <Filter>Application</Filter>
     </ClInclude>
@@ -126,6 +123,12 @@
     </ClInclude>
     <ClInclude Include="main_module.h">
       <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="graphics.h">
+      <Filter>Isometric</Filter>
+    </ClInclude>
+    <ClInclude Include="image.h">
+      <Filter>Isometric</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

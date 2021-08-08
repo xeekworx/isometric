@@ -12,7 +12,7 @@ int main(int argc, char* argv[])
         setup.background_color = 0x006bFFFF;
         setup.shutdown_on_esc = true;
         setup.verbose_logging = true;
-        setup.vertical_sync = true;
+        setup.vertical_sync = false;
         setup.broadcast_fps = true;
 
         auto app = application::create<game_application>(setup);
