@@ -13,6 +13,7 @@ namespace isometric {
 
     public:
         static int range(int min_inclusive, int max_inclusive);
+        static unsigned range(unsigned min_inclusive, unsigned max_inclusive);
     };
 
 }

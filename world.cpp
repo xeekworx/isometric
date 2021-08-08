@@ -48,24 +48,24 @@ void world::render(SDL_Renderer * renderer)
     if (!camera) return; // No point in rendering if there is no camera
 
     SDL_Rect camera_viewport = {
-        camera->get_viewport_x(),
-        camera->get_viewport_y(),
-        camera->get_width(),
-        camera->get_height()
+        static_cast<int>(camera->get_viewport_x()),
+        static_cast<int>(camera->get_viewport_y()),
+        static_cast<int>(camera->get_width()),
+        static_cast<int>(camera->get_height())
     };
 
     // Clip the viewport area so that the diamond edges of the tile map are instead straight lines:
     SDL_RenderSetClipRect(renderer, &camera_viewport);
 
-    unsigned max_tiles_horiz =
+    unsigned max_tiles_horiz = static_cast<unsigned>(
         /* Add the current camera position */           camera->get_current_x() +
         /* Pixel width of the camera + 1 column */      static_cast<float>(camera->get_width() + map->get_tile_width()) /
-        /* Number of half-sized tiles that can fit */   (map->get_tile_width() / 2.0f) + 1;
+        /* Number of half-sized tiles that can fit */   (map->get_tile_width() / 2.0f) + 1);
 
-    unsigned max_tiles_vert =
+    unsigned max_tiles_vert = static_cast<unsigned>(
         /* Add the current camera position */           camera->get_current_y() +
         /* Pixel height of the camera + 1 row */        static_cast<float>(camera->get_height() + map->get_tile_height()) /
-        /* Number of half-sized tiles that can fit */   (map->get_tile_height() / 2.0f) + 1;
+        /* Number of half-sized tiles that can fit */   (map->get_tile_height() / 2.0f) + 1);
 
     max_tiles_horiz = std::min(max_tiles_horiz, map->get_map_width());
     max_tiles_vert = std::min(max_tiles_vert, map->get_map_height());
@@ -75,7 +75,7 @@ void world::render(SDL_Renderer * renderer)
         {
             iterated_tile_count++;
 
-            tile* current_tile = map->get_tile(tile_x, tile_y);
+            tile* current_tile = map->get_tile((unsigned)tile_x, (unsigned)tile_y);
             SDL_Point tile_point{ static_cast<int>(tile_x), static_cast<int>(tile_y) };
             std::shared_ptr<tile_image> current_image = nullptr;
             bool is_selected = false;
@@ -199,7 +199,7 @@ unsigned world::get_max_vertical_tiles() const
     unsigned max_tiles_vert = 0;
 
     if (camera) {
-        max_tiles_vert = std::round(camera->get_height() / (map->get_tile_height() / 2.0f));
+        max_tiles_vert = static_cast<unsigned>(std::round(camera->get_height() / (map->get_tile_height() / 2.0f)));
     }
 
     return max_tiles_vert;

@@ -25,8 +25,8 @@ const SDL_FPoint& input::mouse_position() const
     int x = 0, y = 0;
     SDL_GetMouseState(&x, &x);
 
-    current_position.x = x;
-    current_position.y = y;
+    current_position.x = static_cast<float>(x);
+    current_position.y = static_cast<float>(y);
 
     return current_position;
 }

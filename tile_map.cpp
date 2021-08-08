@@ -62,7 +62,7 @@ unsigned tile_map::add_layer(const std::string& layer_name)
     if (std::find(layers.begin(), layers.end(), layer_name) == layers.end() /* Not found */)
     {
         layers.push_back(layer_name);
-        return layers.size() - 1;
+        return static_cast<unsigned>(layers.size() - 1);
     }
     else
     {
@@ -80,7 +80,7 @@ unsigned tile_map::get_layer_id(const std::string& layer_name) const
     auto iter = std::find(layers.begin(), layers.end(), layer_name);
     if (iter != layers.end())
     {
-        return std::distance(layers.begin(), iter);
+        return static_cast<unsigned>(std::distance(layers.begin(), iter));
     }
     else 
     {
@@ -90,7 +90,9 @@ unsigned tile_map::get_layer_id(const std::string& layer_name) const
 
 const std::string& tile_map::get_layer_name(unsigned layer_id) const
 {
-    if (layer_id >= layers.size()) return std::string();
+    static std::string empty_string = std::string();
+
+    if (layer_id >= layers.size()) return empty_string;
     else
     {
         return layers[layer_id];
@@ -163,7 +165,7 @@ unsigned tile_map::get_random_layer_default_image(const std::string& layer_name)
 {
     if (layer_has_default_images(layer_name)) 
     {
-        unsigned random_index = random::range(0, layer_default_images.at(layer_name).size() - 1);
+        unsigned random_index = random::range(0U, (unsigned)layer_default_images.at(layer_name).size() - 1U);
         return layer_default_images.at(layer_name)[random_index];
     }
     else
