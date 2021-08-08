@@ -12,6 +12,7 @@ std::shared_ptr<tile_map> tile_map::create(unsigned map_width, unsigned map_heig
     new_tile_map->map_height = map_height;
     new_tile_map->tile_width = tile_width;
     new_tile_map->tile_height = tile_height;
+    new_tile_map->tiles.resize(static_cast<size_t>(map_width * map_height));
 
     return new_tile_map;
 }
@@ -56,15 +57,16 @@ std::shared_ptr<tile_image> tile_map::get_selection_image() const
     }
 }
 
-void tile_map::add_layer(const std::string& name)
+unsigned tile_map::add_layer(const std::string& layer_name)
 {
-    if (!layer_tiles.contains(name)) {
-        layer_tiles[name] = std::vector<tile>(
-            map_width * map_height,
-            tile()
-        );
-
-        layers.push_back(name);
+    if (std::find(layers.begin(), layers.end(), layer_name) == layers.end() /* Not found */)
+    {
+        layers.push_back(layer_name);
+        return layers.size() - 1;
+    }
+    else
+    {
+        return get_layer_id(layer_name);
     }
 }
 
@@ -73,42 +75,31 @@ const std::vector<std::string>& tile_map::get_layers() const
     return layers;
 }
 
-unsigned tile_map::get_layer_zindex(const std::string& layer_name) const
+unsigned tile_map::get_layer_id(const std::string& layer_name) const
 {
-    for (unsigned zindex = 0; zindex < layers.size(); zindex++)
+    auto iter = std::find(layers.begin(), layers.end(), layer_name);
+    if (iter != layers.end())
     {
-        if (layers[zindex] == layer_name) return zindex;
+        return std::distance(layers.begin(), iter);
     }
-
-    return std::numeric_limits<unsigned>::max();
-}
-
-bool tile_map::add_tile(const std::string& layer_name, unsigned map_x, unsigned map_y, const tile& tile)
-{
-    if (map_x >= map_width || map_y >= map_height) return false;
-
-    if (!layer_tiles.contains(layer_name))
+    else 
     {
-        add_layer(layer_name);
+        return std::numeric_limits<unsigned>::max();
     }
-
-    layer_tiles[layer_name][map_x + map_width * static_cast<size_t>(map_y)] = tile;
-
-    return true;
 }
 
-const tile& tile_map::get_tile(const std::string& layer_name, unsigned map_x, unsigned map_y)
+const std::string& tile_map::get_layer_name(unsigned layer_id) const
 {
-    if (map_x >= map_width || map_y >= map_height || !layer_tiles.contains(layer_name)) {
-        return tile();
+    if (layer_id >= layers.size()) return std::string();
+    else
+    {
+        return layers[layer_id];
     }
-
-    return layer_tiles.at(layer_name)[map_x + map_width * static_cast<size_t>(map_y)];
 }
 
-const std::vector<tile>& tile_map::get_tiles(const std::string& layer_name) const
+const std::vector<tile>& tile_map::get_tiles() const
 {
-    return layer_tiles.at(layer_name);
+    return tiles;
 }
 
 unsigned tile_map::get_tile_width() const
@@ -131,23 +122,30 @@ unsigned tile_map::get_map_height() const
     return map_height;
 }
 
-const tile& tile_map::get_tile(const std::string& layer, unsigned x, unsigned y) const
+tile* tile_map::get_tile(unsigned x, unsigned y)
 {
     unsigned tile_index = x + y * get_map_width();
 
-    if (layer_tiles.contains(layer) && tile_index >= 0 && tile_index < layer_tiles.size()) {
-        return layer_tiles.at(layer)[tile_index];
+    if (tile_index >= 0 && tile_index < tiles.size()) 
+    {
+        return &tiles[tile_index];
     }
 
-    return tile();
+    return nullptr;
 }
 
-void tile_map::set_tile(const std::string& layer, unsigned x, unsigned y, const tile& tile_source)
+tile* tile_map::set_tile(unsigned x, unsigned y, const tile& tile_source)
 {
     unsigned tile_index = x + y * get_map_width();
 
-    if (layer_tiles.contains(layer) && tile_index >= 0 && tile_index < layer_tiles.at(layer).size()) {
-        layer_tiles.at(layer)[tile_index] = tile_source;
+    if (tile_index >= 0 && tile_index < tiles.size())
+    {
+        tiles[tile_index] = tile_source;
+        return &tiles[tile_index];
+    }
+    else
+    {
+        return nullptr;
     }
 }
 
@@ -174,9 +172,23 @@ unsigned tile_map::get_random_layer_default_image(const std::string& layer_name)
     }
 }
 
+unsigned tile_map::get_random_layer_default_image(unsigned layer_id) const
+{
+    return get_random_layer_default_image(get_layer_name(layer_id));
+}
+
 bool tile_map::layer_has_default_images(const std::string& layer_name) const
 {
     return 
         layer_default_images.contains(layer_name) && 
         layer_default_images.at(layer_name).size() > 0;
+}
+
+bool tile_map::layer_has_default_images(unsigned layer_id) const
+{
+    if (layer_id >= layers.size()) return false;
+    else {
+        auto &layer_name = layers[layer_id];
+        return layer_has_default_images(layer_name);
+    }
 }

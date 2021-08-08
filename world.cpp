@@ -41,7 +41,6 @@ void world::render(SDL_Renderer * renderer)
         std::cout << "WARN: Update wasn't called before the world was rendered! Transform may be invalid as a result." << std::endl;
     }
 
-    unsigned render_layer_count = 0;
     unsigned long long render_tile_count = 0;
     unsigned long long iterated_tile_count = 0;
 
@@ -71,48 +70,42 @@ void world::render(SDL_Renderer * renderer)
     max_tiles_horiz = std::min(max_tiles_horiz, map->get_map_width());
     max_tiles_vert = std::min(max_tiles_vert, map->get_map_height());
 
-    for (auto& layer : map->get_layers())
-    {
-        const std::vector<tile>& tiles = map->get_tiles(layer);
+    for (float tile_y = camera->get_current_y(); tile_y < max_tiles_vert; tile_y++) {
+        for (float tile_x = camera->get_current_x(); tile_x < max_tiles_horiz; tile_x++) 
+        {
+            iterated_tile_count++;
 
-        for (float tile_y = camera->get_current_y(); tile_y < max_tiles_vert; tile_y++) {
-            for (float tile_x = camera->get_current_x(); tile_x < max_tiles_horiz; tile_x++) {
+            tile* current_tile = map->get_tile(tile_x, tile_y);
+            SDL_Point tile_point{ static_cast<int>(tile_x), static_cast<int>(tile_y) };
+            std::shared_ptr<tile_image> current_image = nullptr;
+            bool is_selected = false;
 
-                iterated_tile_count++;
-
-                tile current_tile = map->get_tile(layer, tile_x, tile_y);
-                SDL_Point tile_point{ static_cast<int>(tile_x), static_cast<int>(tile_y) };
-                std::shared_ptr<tile_image> current_image = nullptr;
-
-                if (!current_tile.is_empty())
+            // Render image (if there is one) for every layer:
+            for (unsigned layer_id = 0; layer_id < map->get_layers().size(); layer_id++) 
+            {
+                if (current_tile && current_tile->has_image(layer_id))
                 {
                     // If the tile isn't empty, get it's image:
-                    current_image = map->get_image(current_tile.get_image_id());
+                    current_image = map->get_image(current_tile->get_image_id(layer_id));
                 }
-                else if (current_tile.is_empty() && map->layer_has_default_images(layer))
+                else if ((!current_tile || !current_tile->has_image(layer_id)) && map->layer_has_default_images(layer_id))
                 {
                     // If the tile is empty, attempt to get a default image for the tile and set it so that it's
                     // remembered if this tile comes back into view later.
-                    current_image = map->get_image(map->get_random_layer_default_image(layer));
-                    current_tile.set_image_id(current_image->get_image_id());
-                    map->set_tile(layer, tile_x, tile_y, current_tile);
+                    current_image = map->get_image(map->get_random_layer_default_image(layer_id));
+                    current_tile->set_image_id(layer_id, current_image->get_image_id());
                 }
                 else
                 {
                     continue; // Tile is definitely empty
                 }
 
-                if (current_image != nullptr && !current_image->is_empty())
+                // Tiles are currently in tile coordinates, to render convert it to pixel coordinates relative
+                // to the viewport (screen):
+                SDL_FPoint screen_pos = transform.world_tile_to_viewport(tile_point);
+
+                if (current_image != nullptr && current_tile && current_tile->has_image(layer_id))
                 {
-                    // Tiles are currently in tile coordinates, to render convert it to pixel coordinates relative
-                    // to the viewport (screen):
-                    SDL_FPoint screen_pos = transform.world_tile_to_viewport(tile_point);
-
-                    // Set the currently selected tile based on the position of the mouse cursor:
-                    if (transform.tile_hittest_by_viewport(screen_pos, transform.get_mouse_point())) {
-                        set_selection(tile_point);
-                    }
-
                     SDL_RenderCopyF(
                         renderer,
                         current_image->get_texture(),
@@ -126,41 +119,35 @@ void world::render(SDL_Renderer * renderer)
                     // For metrics & logging, how many tiles have been rendered?
                     render_tile_count++;
                 }
+
+                // Set the currently selected tile based on the position of the mouse cursor:
+                if (transform.tile_hittest_by_viewport(screen_pos, transform.get_mouse_point())) {
+                    set_selection(tile_point);
+                    is_selected = true;
+                }
+
+                // Render the selection tile if the current tile is selected and this is the first layer:
+                if (layer_id == 0 && is_selected && map->has_selection_image())
+                {
+                    auto selection_image = map->get_selection_image();
+
+                    // The selection tile image should be rendered as semi-transparent
+                    SDL_SetTextureAlphaMod(selection_image->get_texture(), 90);
+
+                    SDL_RenderCopyF(
+                        renderer,
+                        selection_image->get_texture(),
+                        selection_image->get_source_rect(),
+                        selection_image->get_dest_rect(
+                            screen_pos.x, screen_pos.y,
+                            map->get_tile_height()
+                        )
+                    );
+
+                    SDL_SetTextureAlphaMod(selection_image->get_texture(), 255);
+                }
             }
         }
-
-        // Render a selection tile after the first layer:
-        if (render_layer_count == 0 && has_selection() && map->has_selection_image())
-        {
-            SDL_FPoint selected_tile_pos = transform.world_tile_to_viewport(selected_world_tile);
-
-            // Is the selected tile visible on the screen?
-            if (selected_tile_pos.x >= (int)camera->get_viewport_x() - (int)map->get_tile_width() && 
-                selected_tile_pos.x <= camera->get_viewport_x() + camera->get_width() &&
-                selected_tile_pos.y >= (int)camera->get_viewport_y() - (int)map->get_tile_height() &&
-                selected_tile_pos.y <= camera->get_viewport_y() + camera->get_height())
-            {
-                auto selection_image = map->get_selection_image();
-
-                // The selection tile image should be rendered as semi-transparent
-                SDL_SetTextureAlphaMod(selection_image->get_texture(), 90);
-
-                SDL_RenderCopyF(
-                    renderer,
-                    selection_image->get_texture(),
-                    selection_image->get_source_rect(),
-                    selection_image->get_dest_rect(
-                        selected_tile_pos.x, selected_tile_pos.y, 
-                        map->get_tile_height()
-                    )
-                );
-
-                SDL_SetTextureAlphaMod(selection_image->get_texture(), 255);
-            }
-        }
-
-        // For metrics & logging, how many layers have been rendered?
-        render_layer_count++;
     }
 
     // Reset clipping so that future rendering isn't affected:

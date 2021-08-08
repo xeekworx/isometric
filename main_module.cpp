@@ -52,7 +52,7 @@ void main_module::on_registered()
         map->add_layer_default_image("grass", i);
     }
 
-    map->add_layer("foliage");
+    unsigned foliage_layer_id = map->add_layer("foliage");
     auto bush1_tile_image = isometric::tile_image::create(
         "bush1", 99, 
         grasslands_image->get_texture(), 
@@ -62,8 +62,8 @@ void main_module::on_registered()
 
     map->add_image(bush1_tile_image);
 
-    map->add_tile("foliage", 0, 0, isometric::tile(99));
-    map->add_tile("foliage", 9, 9, isometric::tile(99));
+    map->set_tile(0, 0, isometric::tile())->set_image_id(foliage_layer_id, 99);
+    map->set_tile(9, 9, isometric::tile())->set_image_id(foliage_layer_id, 99);
 
     world = std::make_unique<isometric::world>(
         map, 

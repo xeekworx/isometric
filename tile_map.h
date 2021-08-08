@@ -18,7 +18,7 @@ namespace isometric {
 
         std::unordered_map<unsigned, std::shared_ptr<tile_image>> tile_images;
         unsigned selection_tile_image = std::numeric_limits<unsigned>::max();
-        std::unordered_map<std::string, std::vector<tile>> layer_tiles;
+        std::vector<tile> tiles;
         std::unordered_map<std::string, std::vector<unsigned>> layer_default_images;
         std::vector<std::string> layers;
 
@@ -85,6 +85,7 @@ namespace isometric {
         /// <remarks>If this layer does not have a default
         /// <returns>The id of the image to use as the default tile image</returns>
         unsigned get_random_layer_default_image(const std::string& layer_name) const;
+        unsigned get_random_layer_default_image(unsigned layer_id) const;
 
         /// <summary>
         /// Determine if the layer has any default tile images
@@ -92,17 +93,16 @@ namespace isometric {
         /// <param name="layer_name">The layer name</param>
         /// <returns>True if the layer has default tile images</returns>
         bool layer_has_default_images(const std::string& layer_name) const;
+        bool layer_has_default_images(unsigned layer_id) const;
 
-        void add_layer(const std::string& name);
+        unsigned add_layer(const std::string& layer_name);
         const std::vector<std::string>& get_layers() const;
-        unsigned get_layer_zindex(const std::string& layer_name) const;
+        unsigned get_layer_id(const std::string& layer_name) const;
+        const std::string& get_layer_name(unsigned layer_id) const;
 
-        bool add_tile(const std::string& layer_name, unsigned map_x, unsigned map_y, const tile& tile);
-        const tile& get_tile(const std::string& layer_name, unsigned map_x, unsigned map_y);
-        const std::vector<tile>& get_tiles(const std::string& layer_name) const;
-
-        const tile& get_tile(const std::string& layer, unsigned x, unsigned y) const;
-        void set_tile(const std::string& layer, unsigned x, unsigned y, const tile& tile_source);
+        tile* set_tile(unsigned x, unsigned y, const tile& tile_source);
+        tile* get_tile(unsigned x, unsigned y);
+        const std::vector<tile>& get_tiles() const;
     };
 
 }

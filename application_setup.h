@@ -12,8 +12,8 @@ namespace isometric {
 
         int32_t background_color = 0x00000000;
 
-        int screen_width = 2560;
-        int screen_height = 1440;
+        int screen_width = 1280;
+        int screen_height = 720;
         bool vertical_sync = false;
 
         double fixed_update_fps = 50.0;
