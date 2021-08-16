@@ -32,6 +32,10 @@ namespace isometric {
 
         unsigned get_max_horizontal_tiles() const;
         unsigned get_max_vertical_tiles() const;
+
+        const isometric::transform& get_transform() const {
+            return this->transform;
+        }
     };
 
 }

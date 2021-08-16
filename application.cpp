@@ -88,15 +88,22 @@ void application::main_loop()
 
         // Calculate delta time...
         double current_time = (double)SDL_GetPerformanceCounter() / SDL_GetPerformanceFrequency(); // Seconds
-        double delta_time = static_cast<float>(current_time - before_time); // Seconds since last frame
+        double delta_time = current_time - before_time; // Seconds since last frame
         before_time = current_time; // Prime before_time for the next frame
 
         // Calculate framerate...
         // Fixed framerate is determined by try_call_fixed_udpate() later
         current_fps.set_from_delta(delta_time);
 
+        graphics->clear(setup.background_color);
+
         try_call_fixed_update(delta_time);
         on_update(delta_time);
+
+        // If you get the following error in the log or console from SDL it means there wasn't enough drawn to enable
+        // SDL's internal batching. This error can be ignored.
+        // ERROR: SDL failed to get a vertex buffer for this Direct3D 9 rendering batch!
+        graphics->present();
 
         if (setup.broadcast_fps) broadcast_fps(delta_time);
     }
@@ -162,8 +169,6 @@ void application::on_fixed_update(double fixed_delta_time)
 
 void application::on_update(double delta_time)
 {
-    graphics->clear(setup.background_color);
-
     for (auto& m : modules) {
         if (m && m->is_enabled()) m->on_update(delta_time);
     }
@@ -171,15 +176,12 @@ void application::on_update(double delta_time)
     for (auto& m : modules) {
         if (m && m->is_enabled()) m->on_late_update(delta_time);
     }
-
-    // If you get the following error in the log or console from SDL it means there wasn't enough drawn to enable
-    // SDL's internal batching. This error can be ignored.
-    // ERROR: SDL failed to get a vertex buffer for this Direct3D 9 rendering batch!
-    graphics->present();
 }
 
 bool application::on_event(const SDL_Event& e)
 {
+    static size_t mouse_motion = 0;
+
     switch (e.type) {
     case SDL_QUIT:
         return false; // Returning false to end the game loop

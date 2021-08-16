@@ -53,8 +53,17 @@ namespace isometric {
     protected:
         application();
 
+        /// <summary>
+        /// This must be called by derived classes or modules will not have their update and late update functions 
+        /// called.
+        /// </summary>
         virtual void on_update(double delta_time);
+
+        /// <summary>
+        /// This must be called by derived classes or modules will not have their fixed update functions called.
+        /// </summary>
         virtual void on_fixed_update(double fixed_delta_time);
+
         virtual bool on_event(const SDL_Event& e);
         virtual bool on_start() { return true; /* true to continue */ }
         virtual void on_shutdown() {}

@@ -158,8 +158,9 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="main_module.cpp" />
+    <ClCompile Include="camera_module.cpp" />
     <ClCompile Include="module.cpp" />
+    <ClCompile Include="player_module.cpp" />
     <ClCompile Include="random.cpp" />
     <ClCompile Include="tile_image.cpp" />
     <ClCompile Include="tile_map.cpp" />
@@ -181,8 +182,9 @@
     <ClInclude Include="graphics.h" />
     <ClInclude Include="image.h" />
     <ClInclude Include="input.h" />
-    <ClInclude Include="main_module.h" />
+    <ClInclude Include="camera_module.h" />
     <ClInclude Include="module.h" />
+    <ClInclude Include="player_module.h" />
     <ClInclude Include="random.h" />
     <ClInclude Include="tile.h" />
     <ClInclude Include="tile_image.h" />

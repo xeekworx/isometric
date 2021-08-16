@@ -7,13 +7,14 @@
 
 namespace isometric::game {
 
-    class main_module : public isometric::module
+    class camera_module : public isometric::module
     {
     private:
-        std::shared_ptr<image> grasslands_image = nullptr;
-        std::shared_ptr<camera> main_camera = nullptr;
         std::shared_ptr<tile_map> map = nullptr;
-        std::unique_ptr<world> world = nullptr;
+        std::shared_ptr<world> world = nullptr;
+
+    public:
+        void setup(std::shared_ptr<tile_map> map, std::shared_ptr<isometric::world> world);
 
     protected:
         void on_registered() override;

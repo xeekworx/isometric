@@ -63,7 +63,7 @@
     <ClCompile Include="game_application.cpp">
       <Filter>Game</Filter>
     </ClCompile>
-    <ClCompile Include="main_module.cpp">
+    <ClCompile Include="camera_module.cpp">
       <Filter>Game</Filter>
     </ClCompile>
     <ClCompile Include="graphics.cpp">
@@ -71,6 +71,9 @@
     </ClCompile>
     <ClCompile Include="image.cpp">
       <Filter>Isometric</Filter>
+    </ClCompile>
+    <ClCompile Include="player_module.cpp">
+      <Filter>Game</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -121,7 +124,7 @@
     <ClInclude Include="game_application.h">
       <Filter>Game</Filter>
     </ClInclude>
-    <ClInclude Include="main_module.h">
+    <ClInclude Include="camera_module.h">
       <Filter>Game</Filter>
     </ClInclude>
     <ClInclude Include="graphics.h">
@@ -129,6 +132,9 @@
     </ClInclude>
     <ClInclude Include="image.h">
       <Filter>Isometric</Filter>
+    </ClInclude>
+    <ClInclude Include="player_module.h">
+      <Filter>Game</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
