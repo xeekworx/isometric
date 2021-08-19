@@ -34,18 +34,17 @@ const SDL_FPoint& player_module::get_player_location() const
 void player_module::on_update(double delta_time)
 {
     constexpr double speed = 50.0; // Pixels per second of movement
-    auto input = application::get_app()->get_input();
 
-    if (input->keycode_down(SDLK_a)) {
+    if (input::keycode_down(SDLK_a)) {
         location.x -= speed * delta_time;
     }
-    if (input->keycode_down(SDLK_d)) {
+    if (input::keycode_down(SDLK_d)) {
         location.x += speed * delta_time;
     }
-    if (input->keycode_down(SDLK_w)) {
+    if (input::keycode_down(SDLK_w)) {
         location.y -= speed * delta_time;
     }
-    if (input->keycode_down(SDLK_s)) {
+    if (input::keycode_down(SDLK_s)) {
         location.y += speed * delta_time;
     }
 }
@@ -66,7 +65,7 @@ void player_module::on_late_update(double delta_time)
         location.y
     };
 
-    auto player_in_viewport = transform.world_to_viewport(player_in_world);
+    auto player_in_viewport = transform.world_pixels_to_viewport_pixels(player_in_world);
 
     SDL_FRect player_rect{
         player_in_viewport.x,

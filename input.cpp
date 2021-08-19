@@ -3,40 +3,39 @@
 
 using namespace isometric;
 
-const uint8_t * input::keyboard_state() const
+const uint8_t * input::keyboard_state()
 {
     return SDL_GetKeyboardState(NULL);
 }
 
-bool isometric::input::scancode_down(SDL_Scancode scancode) const
+bool isometric::input::scancode_down(SDL_Scancode scancode)
 {
     return keyboard_state()[scancode];
 }
 
-bool isometric::input::keycode_down(SDL_Keycode key) const
+bool isometric::input::keycode_down(SDL_Keycode key)
 {
     return scancode_down(SDL_GetScancodeFromKey(key));
 }
 
-const SDL_FPoint& input::mouse_position() const
+SDL_FPoint input::mouse_position()
 {
-    static SDL_FPoint current_position = {};
+    int mouse_x = 0, mouse_y = 0;
+    SDL_GetMouseState(&mouse_x, &mouse_y);
 
-    int x = 0, y = 0;
-    SDL_GetMouseState(&x, &x);
-
-    current_position.x = static_cast<float>(x);
-    current_position.y = static_cast<float>(y);
-
-    return current_position;
+    return
+    {
+        static_cast<float>(mouse_x),
+        static_cast<float>(mouse_y),
+    };
 }
 
-uint32_t input::mouse_buttons() const
+uint32_t input::mouse_buttons()
 {
     return SDL_GetMouseState(NULL, NULL);
 }
 
-bool isometric::input::mouse_down(int button) const
+bool isometric::input::mouse_down(int button)
 {
     return mouse_buttons() & SDL_BUTTON(button);
 }

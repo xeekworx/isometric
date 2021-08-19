@@ -1,5 +1,6 @@
 #include <SDL.h>
 #include "world.h"
+#include "input.h"
 #include <iostream>
 
 using namespace isometric;
@@ -102,7 +103,7 @@ void world::render(SDL_Renderer * renderer)
 
                 // Tiles are currently in tile coordinates, to render convert it to pixel coordinates relative
                 // to the viewport (screen):
-                SDL_FPoint screen_pos = transform.world_tile_to_viewport(tile_point);
+                SDL_FPoint screen_pos = transform.world_tile_to_viewport_pixels(tile_point);
 
                 if (current_image != nullptr && current_tile && current_tile->has_image(layer_id))
                 {
@@ -121,7 +122,7 @@ void world::render(SDL_Renderer * renderer)
                 }
 
                 // Set the currently selected tile based on the position of the mouse cursor:
-                if (transform.tile_hittest_by_viewport(screen_pos, transform.get_mouse_point())) {
+                if (transform.tile_hittest_by_viewport(screen_pos, input::mouse_position())) {
                     set_selection(tile_point);
                     is_selected = true;
                 }

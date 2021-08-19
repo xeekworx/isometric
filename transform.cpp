@@ -33,24 +33,16 @@ std::shared_ptr<tile_map> transform::set_map(std::shared_ptr<tile_map> map)
     return old_map;
 }
 
-SDL_FPoint transform::get_mouse_point()
-{
-    int mouse_x = 0, mouse_y = 0;
-    SDL_GetMouseState(&mouse_x, &mouse_y);
-
-    return
-    {
-        static_cast<float>(mouse_x),
-        static_cast<float>(mouse_y),
-    };
-}
-
 bool transform::has_sanity() const
 {
-    return main_camera && map;
+    bool sanity = main_camera && map;
+
+    SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, "transform lacks sanity (missing camera and/or map)");
+
+    return sanity;
 }
 
-SDL_FPoint transform::world_tile_to_pixels(const SDL_Point& tile_point) const
+SDL_FPoint transform::world_tile_to_world_pixels(const SDL_Point& tile_point) const
 {
     if (!has_sanity()) return SDL_FPoint();
 
@@ -73,8 +65,10 @@ SDL_FPoint transform::world_tile_to_pixels(const SDL_Point& tile_point) const
     return SDL_FPoint{ world_x, world_y };
 }
 
-SDL_Point transform::pixels_to_world_tile(const SDL_FPoint& point) const
+SDL_Point transform::world_pixels_to_world_tile(const SDL_FPoint& point) const
 {
+    if (!has_sanity()) return SDL_Point();
+
     int y = static_cast<int>(point.y / (map->get_tile_height() / 2.0f));
     int x = static_cast<int>(point.x / map->get_tile_width() +
         y % 2 == 0
@@ -101,12 +95,12 @@ SDL_Point transform::pixels_to_world_tile(const SDL_FPoint& point) const
     return SDL_Point{ x, y };
 }
 
-SDL_FPoint transform::world_tile_to_viewport(const SDL_Point& tile_point) const
+SDL_FPoint transform::world_tile_to_viewport_pixels(const SDL_Point& tile_point) const
 {
     if (!has_sanity()) return SDL_FPoint();
 
     // Get this tile's pixel position relative to the entire map:
-    SDL_FPoint screen_point = world_tile_to_pixels(tile_point);
+    SDL_FPoint screen_point = world_tile_to_world_pixels(tile_point);
 
     // Convert the tile's pixel position to be relative to the top left of the camera's position:
     screen_point.x = screen_point.x - main_camera->get_current_x() * map->get_tile_width();
@@ -120,7 +114,7 @@ SDL_FPoint transform::world_tile_to_viewport(const SDL_Point& tile_point) const
     return screen_point;
 }
 
-SDL_FPoint transform::world_to_viewport(const SDL_FPoint& point) const
+SDL_FPoint transform::world_pixels_to_viewport_pixels(const SDL_FPoint& point) const
 {
     if (!has_sanity()) return SDL_FPoint();
 
@@ -129,7 +123,7 @@ SDL_FPoint transform::world_to_viewport(const SDL_FPoint& point) const
         static_cast<int>(main_camera->get_current_y())
     };
 
-    SDL_FPoint current_pixel_pos = world_tile_to_pixels(current_tile_pos);
+    SDL_FPoint current_pixel_pos = world_tile_to_world_pixels(current_tile_pos);
 
     current_pixel_pos.x +=
         current_tile_pos.y % 2 == 0
@@ -144,12 +138,14 @@ SDL_FPoint transform::world_to_viewport(const SDL_FPoint& point) const
 
 bool transform::tile_hittest(const SDL_Point& tile_point, const SDL_FPoint& point) const
 {
-    const SDL_FPoint tile_viewport_point = world_tile_to_viewport(tile_point);
+    const SDL_FPoint tile_viewport_point = world_tile_to_viewport_pixels(tile_point);
     return tile_hittest_by_viewport(tile_viewport_point, point);
 }
 
 bool transform::tile_hittest_by_viewport(const SDL_FPoint& tile_viewport_point, const SDL_FPoint& point) const
 {
+    if (!has_sanity()) return false;
+
     SDL_FPoint translated_point = SDL_FPoint{
         point.x - tile_viewport_point.x,
         point.y - tile_viewport_point.y

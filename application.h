@@ -25,7 +25,6 @@ namespace isometric {
         SDL_Window* window = nullptr;
 
         std::shared_ptr<isometric::graphics> graphics = nullptr;
-        std::shared_ptr<isometric::input> input = nullptr;
         std::list<std::shared_ptr<module>> modules;
 
     public:

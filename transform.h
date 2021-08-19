@@ -3,6 +3,7 @@
 #include "tile_map.h"
 
 namespace isometric {
+
     class transform
     {
     private:
@@ -18,8 +19,6 @@ namespace isometric {
         std::shared_ptr<tile_map> get_map() const;
         std::shared_ptr<tile_map> set_map(std::shared_ptr<tile_map> map);
 
-        static SDL_FPoint get_mouse_point();
-
         bool has_sanity() const;
 
         /// <summary>
@@ -28,7 +27,7 @@ namespace isometric {
         /// </summary>
         /// <param name="tile_point">The position in tile coordinates, not pixel coordinates</param>
         /// <returns>The pixel position of a tile starting at 0, 0</returns>
-        SDL_FPoint world_tile_to_pixels(const SDL_Point& tile_point) const;
+        SDL_FPoint world_tile_to_world_pixels(const SDL_Point& tile_point) const;
 
         /// <summary>
         /// Converts a world based pixel position to a world tile position (in tile coordinates). The pixel based 
@@ -36,7 +35,7 @@ namespace isometric {
         /// </summary>
         /// <param name="point">The position in world pixel coordinates, not tile coordinates</param>
         /// <returns>The tile position of a tile starting at 0, 0 relative to the entire world</returns>
-        SDL_Point pixels_to_world_tile(const SDL_FPoint& point) const;
+        SDL_Point world_pixels_to_world_tile(const SDL_FPoint& point) const;
 
         /// <summary>
         /// Converts a world tile position (in tile coordinates) to a viewport pixel position. This is where the tile
@@ -44,14 +43,14 @@ namespace isometric {
         /// </summary>
         /// <param name="tile_point">The world position in tile coordinates, not pixel coordinates</param>
         /// <returns>The pixel position of a tile starting at top left of the camera viewport</returns>
-        SDL_FPoint world_tile_to_viewport(const SDL_Point& tile_point) const;
+        SDL_FPoint world_tile_to_viewport_pixels(const SDL_Point& tile_point) const;
 
         /// <summary>
         /// Converts a world (pixels) point into a viewport (pixels) point.
         /// </summary>
         /// <param name="point">The world position in pixel coordinates, not tile coordinates</param>
         /// <returns>The pixel position starting at top left of the camera viewport</returns>
-        SDL_FPoint world_to_viewport(const SDL_FPoint& point) const;
+        SDL_FPoint world_pixels_to_viewport_pixels(const SDL_FPoint& point) const;
 
         /// <summary>
         /// Is an viewport x, y point inside a tile
@@ -71,5 +70,6 @@ namespace isometric {
         /// <returns>True if point is inside the tile</returns>
         bool tile_hittest_by_viewport(const SDL_FPoint& tile_viewport_point, const SDL_FPoint& point) const;
     };
+
 }
 

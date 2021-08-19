@@ -76,7 +76,7 @@ void application::main_loop()
     SDL_Event e = {};
 
     // Setup the initial beforeTime before the game loop starts up...
-    double before_time = (double)SDL_GetPerformanceCounter() / SDL_GetPerformanceFrequency();
+    double before_time = static_cast<double>(SDL_GetPerformanceCounter()) / SDL_GetPerformanceFrequency();
 
     while (!should_exit) {
         while (SDL_PollEvent(&e)) {
@@ -87,7 +87,7 @@ void application::main_loop()
         }
 
         // Calculate delta time...
-        double current_time = (double)SDL_GetPerformanceCounter() / SDL_GetPerformanceFrequency(); // Seconds
+        double current_time = static_cast<double>(SDL_GetPerformanceCounter()) / SDL_GetPerformanceFrequency(); // Seconds
         double delta_time = current_time - before_time; // Seconds since last frame
         before_time = current_time; // Prime before_time for the next frame
 
@@ -202,11 +202,6 @@ std::shared_ptr<graphics> application::get_graphics() const
     return graphics;
 }
 
-std::shared_ptr<input> application::get_input() const
-{
-    return input;
-}
-
 bool application::initialize()
 {
     SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "Application initializing");
@@ -278,7 +273,6 @@ bool application::initialize()
         }
 
         this->graphics = std::shared_ptr<isometric::graphics>(new isometric::graphics(renderer));
-        this->input = std::shared_ptr<isometric::input>(new isometric::input());
     }
     catch (std::exception ex)
     {
