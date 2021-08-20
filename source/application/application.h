@@ -6,6 +6,7 @@
 #include "../source/core/graphics.h"
 #include "../source/core/input.h"
 #include "../source/core/module.h"
+#include "../tools/stopwatch.h"
 #include "../source/tools/framerate.h"
 
 namespace isometric {
@@ -18,6 +19,10 @@ namespace isometric {
 
         application_setup setup;
         bool should_exit = false;
+
+        stopwatch frame_stopwatch;          // Used to calculate delta time
+        stopwatch fixed_frame_stopwatch;    // Used to calculate fixed delta time
+
         framerate current_fps;
         framerate current_fixed_fps;
 

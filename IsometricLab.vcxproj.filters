@@ -138,5 +138,8 @@
       <Filter>Tools</Filter>
     </ClInclude>
     <ClInclude Include="include\isometric.h" />
+    <ClInclude Include="source\tools\stopwatch.h">
+      <Filter>Tools</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -10,6 +10,9 @@ namespace isometric {
         std::shared_ptr<camera> main_camera;
         std::shared_ptr<tile_map> map;
 
+        float world_x = 0;
+        float world_y = 0;
+
     public:
         transform(std::shared_ptr<camera> camera, std::shared_ptr<tile_map> map);
 

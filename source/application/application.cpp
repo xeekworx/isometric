@@ -40,8 +40,8 @@ bool application::start()
     on_shutdown();
 
     if (setup.broadcast_fps) {
-        SDL_LogVerbose(SDL_LOG_CATEGORY_APPLICATION, "Minimum FPS: %.02f, Maximum FPS: %0.2f",
-            current_fps.get_minimum(), current_fps.get_maximum());
+        SDL_LogVerbose(SDL_LOG_CATEGORY_APPLICATION, "Minimum FPS: %.02f, Maximum FPS: %0.2f, Average FPS: %0.2f",
+            current_fps.get_minimum(), current_fps.get_maximum(), current_fps.get_overall_average());
     }
 
     SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "Unregistering %llu modules", modules.size());
@@ -76,7 +76,9 @@ void application::main_loop()
     SDL_Event e = {};
 
     // Setup the initial beforeTime before the game loop starts up...
-    double before_time = static_cast<double>(SDL_GetPerformanceCounter()) / SDL_GetPerformanceFrequency();
+    //double before_time = static_cast<double>(SDL_GetPerformanceCounter()) / SDL_GetPerformanceFrequency();
+    frame_stopwatch.start(true);
+    fixed_frame_stopwatch.start(true);
 
     while (!should_exit) {
         while (SDL_PollEvent(&e)) {
@@ -87,9 +89,9 @@ void application::main_loop()
         }
 
         // Calculate delta time...
-        double current_time = static_cast<double>(SDL_GetPerformanceCounter()) / SDL_GetPerformanceFrequency(); // Seconds
-        double delta_time = current_time - before_time; // Seconds since last frame
-        before_time = current_time; // Prime before_time for the next frame
+        frame_stopwatch.stop();
+        double delta_time = frame_stopwatch.get_elapsed_sec();
+        frame_stopwatch.restart();
 
         // Calculate framerate...
         // Fixed framerate is determined by try_call_fixed_udpate() later
@@ -127,8 +129,6 @@ void application::broadcast_fps(double delta_time) const
 
 void application::try_call_fixed_update(double delta_time)
 {
-    static double before_time = (double)SDL_GetPerformanceCounter() / SDL_GetPerformanceFrequency();
-
     constexpr int max_steps = 5; // Maximum number of steps, to avoid degrading to an halt.
     static double fixed_timestep = 1.0 / setup.fixed_update_fps;
     static double fixed_update_accumulator = 0.0;
@@ -151,9 +151,10 @@ void application::try_call_fixed_update(double delta_time)
     const int steps_clamped = std::min(steps, max_steps);
     for (int i = 0; i < steps_clamped; i++)
     {
-        double current_time = (double)SDL_GetPerformanceCounter() / SDL_GetPerformanceFrequency();
-        double fixed_delta_time = static_cast<float>(current_time - before_time);
-        before_time = current_time; // Prime before_time for the next frame
+        // Calculate fixed delta time:
+        fixed_frame_stopwatch.stop();
+        double fixed_delta_time = fixed_frame_stopwatch.get_elapsed_sec();
+        fixed_frame_stopwatch.restart();
 
         current_fixed_fps.set_from_delta(fixed_delta_time);
         on_fixed_update(fixed_delta_time);
