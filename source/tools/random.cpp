@@ -1,7 +1,7 @@
 #include "random.h"
 #include <time.h>
 
-using namespace isometric;
+using namespace isometric::tools;
 
 std::random_device random::rd;
 std::mt19937 random::gen(rd());

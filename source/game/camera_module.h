@@ -1,9 +1,5 @@
 #pragma once
-#include "module.h"
-#include "image.h"
-#include "camera.h"
-#include "tile_map.h"
-#include "world.h"
+#include <isometric.h>
 
 namespace isometric::game {
 

@@ -28,7 +28,7 @@ std::shared_ptr<camera> world::get_main_camera() const
     return nullptr;
 }
 
-void world::update()
+void world::update(double delta_time)
 {
     transform.set_camera(get_main_camera());
     transform.set_map(map);
@@ -36,7 +36,7 @@ void world::update()
     update_called = true;
 }
 
-void world::render(SDL_Renderer * renderer)
+void world::render(SDL_Renderer * renderer, double delta_time)
 {
     if (!update_called) {
         std::cout << "WARN: Update wasn't called before the world was rendered! Transform may be invalid as a result." << std::endl;
@@ -151,6 +151,11 @@ void world::render(SDL_Renderer * renderer)
         }
     }
 
+    // Render game objects:
+    for (const auto& obj : objects) {
+        if (obj) obj->on_render(renderer, delta_time);
+    }
+
     // Reset clipping so that future rendering isn't affected:
     SDL_RenderSetClipRect(renderer, nullptr);
 
@@ -204,4 +209,19 @@ unsigned world::get_max_vertical_tiles() const
     }
 
     return max_tiles_vert;
+}
+
+void isometric::world::add_object(std::shared_ptr<game_object> obj)
+{
+    if (obj) {
+        obj->setup_transform(get_main_camera(), map);
+        objects.push_back(obj);
+    }
+}
+
+void isometric::world::remove_object(std::shared_ptr<game_object> obj)
+{
+    if (obj) {
+        objects.remove(obj);
+    }
 }

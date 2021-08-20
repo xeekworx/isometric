@@ -1,5 +1,5 @@
 #pragma once
-#include "application.h"
+#include <isometric.h>
 #include "camera_module.h"
 #include "player_module.h"
 

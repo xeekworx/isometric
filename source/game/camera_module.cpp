@@ -1,4 +1,3 @@
-#include "application.h"
 #include "camera_module.h"
 #include <algorithm>
 

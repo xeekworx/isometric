@@ -37,7 +37,9 @@ bool transform::has_sanity() const
 {
     bool sanity = main_camera && map;
 
-    SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, "transform lacks sanity (missing camera and/or map)");
+    if (!sanity) {
+        SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, "transform lacks sanity (missing camera and/or map)");
+    }
 
     return sanity;
 }

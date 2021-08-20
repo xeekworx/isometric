@@ -95,8 +95,8 @@ void isometric::game::game_application::on_update(double delta_time)
 {
     auto renderer = application::get_app()->get_graphics()->get_renderer();
 
-    world->update();
-    world->render(renderer);
+    world->update(delta_time);
+    world->render(renderer, delta_time);
 
     return application::on_update(delta_time);
 }

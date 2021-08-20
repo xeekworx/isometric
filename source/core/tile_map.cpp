@@ -1,8 +1,9 @@
 #include "tile_map.h"
-#include "random.h"
+#include "../source/tools/random.h"
 #include <limits>
 
 using namespace isometric;
+using namespace isometric::tools;
 
 std::shared_ptr<tile_map> tile_map::create(unsigned map_width, unsigned map_height, unsigned tile_width, unsigned tile_height)
 {

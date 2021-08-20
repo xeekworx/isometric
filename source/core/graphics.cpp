@@ -17,7 +17,9 @@ bool graphics::has_sanity() const
 {
     bool sanity = renderer && pixel_format;
 
-    SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, "graphics lacks sanity (missing renderer and/or pixel format)");
+    if (!sanity) {
+        SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, "graphics lacks sanity (missing renderer and/or pixel format)");
+    }
 
     return sanity;
 }
@@ -46,7 +48,7 @@ void graphics::set_color(uint32_t color)
 
 uint32_t isometric::graphics::get_color()
 {
-    if (!has_sanity()) return;
+    if (!has_sanity()) return 0x00000000;
 
     SDL_Color draw_color{};
     SDL_GetRenderDrawColor(renderer,

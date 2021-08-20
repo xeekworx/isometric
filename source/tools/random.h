@@ -1,7 +1,7 @@
 #pragma once
 #include <random>
 
-namespace isometric {
+namespace isometric::tools {
 
     class random
     {

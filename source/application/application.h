@@ -3,10 +3,10 @@
 #include <memory>
 #include <list>
 #include "application_setup.h"
-#include "graphics.h"
-#include "input.h"
-#include "module.h"
-#include "framerate.h"
+#include "../source/core/graphics.h"
+#include "../source/core/input.h"
+#include "../source/core/module.h"
+#include "../source/tools/framerate.h"
 
 namespace isometric {
 
@@ -44,7 +44,6 @@ namespace isometric {
         static std::shared_ptr<application> get_app() { return this_app; }
         const application_setup& get_setup() const;
         std::shared_ptr<isometric::graphics> get_graphics() const;
-        std::shared_ptr<isometric::input> get_input() const;
         bool is_initialized() const { return initialized; }
 
         static bool is_64bit();

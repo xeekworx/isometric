@@ -1,14 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
-    </Filter>
     <Filter Include="Resource Files">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
@@ -16,62 +8,66 @@
     <Filter Include="Content">
       <UniqueIdentifier>{24f645f6-1a96-471a-bb56-e49cec9c4306}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Isometric">
-      <UniqueIdentifier>{9d01d137-f4b3-4ec9-8b55-5d7e0db2ae51}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Application">
       <UniqueIdentifier>{d002a08d-d373-4f49-b110-66e1e4eddd41}</UniqueIdentifier>
     </Filter>
     <Filter Include="Game">
       <UniqueIdentifier>{481b0ce7-23d4-4f89-9624-35322d72e271}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Tools">
+      <UniqueIdentifier>{f4dce4bb-2487-4e54-9ac2-97c420e53015}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core">
+      <UniqueIdentifier>{9d01d137-f4b3-4ec9-8b55-5d7e0db2ae51}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="camera.cpp">
-      <Filter>Isometric</Filter>
+    <ClCompile Include="source\core\image.cpp">
+      <Filter>Core</Filter>
     </ClCompile>
-    <ClCompile Include="random.cpp">
-      <Filter>Isometric</Filter>
+    <ClCompile Include="source\core\input.cpp">
+      <Filter>Core</Filter>
     </ClCompile>
-    <ClCompile Include="tile_image.cpp">
-      <Filter>Isometric</Filter>
+    <ClCompile Include="source\core\module.cpp">
+      <Filter>Core</Filter>
     </ClCompile>
-    <ClCompile Include="tile_map.cpp">
-      <Filter>Isometric</Filter>
+    <ClCompile Include="source\core\tile_image.cpp">
+      <Filter>Core</Filter>
     </ClCompile>
-    <ClCompile Include="transform.cpp">
-      <Filter>Isometric</Filter>
+    <ClCompile Include="source\core\tile_map.cpp">
+      <Filter>Core</Filter>
     </ClCompile>
-    <ClCompile Include="world.cpp">
-      <Filter>Isometric</Filter>
+    <ClCompile Include="source\core\transform.cpp">
+      <Filter>Core</Filter>
     </ClCompile>
-    <ClCompile Include="application.cpp">
+    <ClCompile Include="source\core\world.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="source\core\camera.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="source\core\game_object.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="source\core\graphics.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="source\application\application.cpp">
       <Filter>Application</Filter>
     </ClCompile>
-    <ClCompile Include="main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="module.cpp">
-      <Filter>Application</Filter>
-    </ClCompile>
-    <ClCompile Include="input.cpp">
-      <Filter>Application</Filter>
-    </ClCompile>
-    <ClCompile Include="game_application.cpp">
+    <ClCompile Include="source\game\game_application.cpp">
       <Filter>Game</Filter>
     </ClCompile>
-    <ClCompile Include="camera_module.cpp">
+    <ClCompile Include="source\game\player_module.cpp">
       <Filter>Game</Filter>
     </ClCompile>
-    <ClCompile Include="graphics.cpp">
-      <Filter>Isometric</Filter>
-    </ClCompile>
-    <ClCompile Include="image.cpp">
-      <Filter>Isometric</Filter>
-    </ClCompile>
-    <ClCompile Include="player_module.cpp">
+    <ClCompile Include="source\game\camera_module.cpp">
       <Filter>Game</Filter>
     </ClCompile>
+    <ClCompile Include="source\tools\random.cpp">
+      <Filter>Tools</Filter>
+    </ClCompile>
+    <ClCompile Include="source\main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -82,61 +78,65 @@
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="world.h">
-      <Filter>Isometric</Filter>
-    </ClInclude>
-    <ClInclude Include="transform.h">
-      <Filter>Isometric</Filter>
-    </ClInclude>
-    <ClInclude Include="tile_map.h">
-      <Filter>Isometric</Filter>
-    </ClInclude>
-    <ClInclude Include="tile_image.h">
-      <Filter>Isometric</Filter>
-    </ClInclude>
-    <ClInclude Include="tile.h">
-      <Filter>Isometric</Filter>
-    </ClInclude>
-    <ClInclude Include="random.h">
-      <Filter>Isometric</Filter>
-    </ClInclude>
-    <ClInclude Include="camera.h">
-      <Filter>Isometric</Filter>
-    </ClInclude>
-    <ClInclude Include="application.h">
-      <Filter>Application</Filter>
-    </ClInclude>
-    <ClInclude Include="application_setup.h">
-      <Filter>Application</Filter>
-    </ClInclude>
-    <ClInclude Include="module.h">
-      <Filter>Application</Filter>
-    </ClInclude>
-    <ClInclude Include="framerate.h">
-      <Filter>Application</Filter>
-    </ClInclude>
-    <ClInclude Include="input.h">
-      <Filter>Application</Filter>
-    </ClInclude>
-    <ClInclude Include="game_application.h">
-      <Filter>Game</Filter>
-    </ClInclude>
-    <ClInclude Include="camera_module.h">
-      <Filter>Game</Filter>
-    </ClInclude>
-    <ClInclude Include="graphics.h">
-      <Filter>Isometric</Filter>
-    </ClInclude>
-    <ClInclude Include="image.h">
-      <Filter>Isometric</Filter>
-    </ClInclude>
-    <ClInclude Include="player_module.h">
-      <Filter>Game</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
     <Font Include="content\Enigma__2.TTF">
       <Filter>Content</Filter>
     </Font>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="source\core\image.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="source\core\input.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="source\core\module.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="source\core\tile.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="source\core\tile_image.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="source\core\tile_map.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="source\core\transform.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="source\core\world.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="source\core\camera.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="source\core\game_object.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="source\core\graphics.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="source\application\application.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="source\application\application_setup.h">
+      <Filter>Application</Filter>
+    </ClInclude>
+    <ClInclude Include="source\game\game_application.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="source\game\player_module.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="source\game\camera_module.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="source\tools\random.h">
+      <Filter>Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="source\tools\framerate.h">
+      <Filter>Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="include\isometric.h" />
   </ItemGroup>
 </Project>

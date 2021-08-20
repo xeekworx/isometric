@@ -1,4 +1,3 @@
-#include "application.h"
 #include "player_module.h"
 #include <algorithm>
 

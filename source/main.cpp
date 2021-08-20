@@ -1,5 +1,5 @@
 #include <memory>
-#include "game_application.h"
+#include "./game/game_application.h"
 
 using namespace isometric;
 using namespace isometric::game;

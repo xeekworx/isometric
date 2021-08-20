@@ -1,10 +1,12 @@
 #pragma once
 #include <vector>
+#include <list>
 #include <memory>
 #include <ranges>
 #include "transform.h"
 #include "camera.h"
 #include "tile_map.h"
+#include "game_object.h"
 
 namespace isometric {
 
@@ -12,6 +14,7 @@ namespace isometric {
     {
     private:
         std::vector<std::shared_ptr<camera>> cameras;
+        std::list<std::shared_ptr<game_object>> objects;
         std::shared_ptr<tile_map> map;
         transform transform;
         SDL_Point selected_world_tile;
@@ -22,8 +25,8 @@ namespace isometric {
         world(std::shared_ptr<tile_map> map, std::shared_ptr<camera> main_camera);
         std::shared_ptr<camera> get_main_camera() const;
 
-        void update();
-        void render(SDL_Renderer * renderer);
+        void update(double delta_time);
+        void render(SDL_Renderer * renderer, double delta_time);
 
         void set_selection(const SDL_Point& tile_point);
         const SDL_Point& get_selection() const;
@@ -36,6 +39,9 @@ namespace isometric {
         const isometric::transform& get_transform() const {
             return this->transform;
         }
+
+        void add_object(std::shared_ptr<game_object> obj);
+        void remove_object(std::shared_ptr<game_object> obj);
     };
 
 }

@@ -1,7 +1,7 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include "image.h"
-#include "application.h"
+#include "../source/application/application.h"
 
 using namespace isometric;
 
