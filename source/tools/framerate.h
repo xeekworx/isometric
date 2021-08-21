@@ -3,7 +3,7 @@
 #include <numeric>
 #include <functional>
 
-namespace isometric {
+namespace isometric::tools {
 
     class framerate {
     private:

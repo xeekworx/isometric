@@ -1,7 +1,7 @@
 #pragma once
 #include <SDL.h>
 
-namespace isometric {
+namespace isometric::tools {
 
     class stopwatch {
     private:

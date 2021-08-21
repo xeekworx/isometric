@@ -20,11 +20,11 @@ namespace isometric {
         application_setup setup;
         bool should_exit = false;
 
-        stopwatch frame_stopwatch;          // Used to calculate delta time
-        stopwatch fixed_frame_stopwatch;    // Used to calculate fixed delta time
+        tools::stopwatch frame_stopwatch;          // Used to calculate delta time
+        tools::stopwatch fixed_frame_stopwatch;    // Used to calculate fixed delta time
 
-        framerate current_fps;
-        framerate current_fixed_fps;
+        tools::framerate current_fps;
+        tools::framerate current_fixed_fps;
 
         SDL_Renderer* renderer = nullptr;
         SDL_Window* window = nullptr;
