@@ -8,6 +8,7 @@
 #include "../source/core/module.h"
 #include "../tools/stopwatch.h"
 #include "../source/tools/framerate.h"
+#include "../source/assets/asset_management.h"
 
 namespace isometric {
 
@@ -29,6 +30,7 @@ namespace isometric {
         SDL_Renderer* renderer = nullptr;
         SDL_Window* window = nullptr;
 
+        std::shared_ptr<isometric::assets::asset_management> asset_manager = nullptr;
         std::shared_ptr<isometric::graphics> graphics = nullptr;
         std::list<std::shared_ptr<module>> modules;
 
@@ -49,6 +51,8 @@ namespace isometric {
         static std::shared_ptr<application> get_app() { return this_app; }
         const application_setup& get_setup() const;
         std::shared_ptr<isometric::graphics> get_graphics() const;
+        std::shared_ptr<isometric::assets::asset_management> get_asset_manager() const;
+        const tools::framerate& get_framerate() const { return current_fps; }
         bool is_initialized() const { return initialized; }
 
         static bool is_64bit();

@@ -20,11 +20,11 @@
     <Filter Include="Core">
       <UniqueIdentifier>{9d01d137-f4b3-4ec9-8b55-5d7e0db2ae51}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Asset Management">
+      <UniqueIdentifier>{80892e51-dd4f-43d4-bf9b-f2dfb2cf568c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="source\core\image.cpp">
-      <Filter>Core</Filter>
-    </ClCompile>
     <ClCompile Include="source\core\input.cpp">
       <Filter>Core</Filter>
     </ClCompile>
@@ -68,6 +68,18 @@
       <Filter>Tools</Filter>
     </ClCompile>
     <ClCompile Include="source\main.cpp" />
+    <ClCompile Include="source\assets\image.cpp">
+      <Filter>Asset Management</Filter>
+    </ClCompile>
+    <ClCompile Include="source\assets\asset_management.cpp">
+      <Filter>Asset Management</Filter>
+    </ClCompile>
+    <ClCompile Include="source\assets\font.cpp">
+      <Filter>Asset Management</Filter>
+    </ClCompile>
+    <ClCompile Include="source\game\fps_display_module.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -83,9 +95,6 @@
     </Font>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="source\core\image.h">
-      <Filter>Core</Filter>
-    </ClInclude>
     <ClInclude Include="source\core\input.h">
       <Filter>Core</Filter>
     </ClInclude>
@@ -140,6 +149,21 @@
     <ClInclude Include="include\isometric.h" />
     <ClInclude Include="source\tools\stopwatch.h">
       <Filter>Tools</Filter>
+    </ClInclude>
+    <ClInclude Include="source\assets\image.h">
+      <Filter>Asset Management</Filter>
+    </ClInclude>
+    <ClInclude Include="source\assets\asset.h">
+      <Filter>Asset Management</Filter>
+    </ClInclude>
+    <ClInclude Include="source\assets\asset_management.h">
+      <Filter>Asset Management</Filter>
+    </ClInclude>
+    <ClInclude Include="source\assets\font.h">
+      <Filter>Asset Management</Filter>
+    </ClInclude>
+    <ClInclude Include="source\game\fps_display_module.h">
+      <Filter>Game</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

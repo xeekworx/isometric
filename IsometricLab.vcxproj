@@ -160,10 +160,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="source\application\application.cpp" />
+    <ClCompile Include="source\assets\asset_management.cpp" />
+    <ClCompile Include="source\assets\font.cpp" />
+    <ClCompile Include="source\assets\image.cpp" />
     <ClCompile Include="source\core\camera.cpp" />
     <ClCompile Include="source\core\game_object.cpp" />
     <ClCompile Include="source\core\graphics.cpp" />
-    <ClCompile Include="source\core\image.cpp" />
     <ClCompile Include="source\core\input.cpp" />
     <ClCompile Include="source\core\module.cpp" />
     <ClCompile Include="source\core\tile_image.cpp" />
@@ -171,6 +173,7 @@
     <ClCompile Include="source\core\transform.cpp" />
     <ClCompile Include="source\core\world.cpp" />
     <ClCompile Include="source\game\camera_module.cpp" />
+    <ClCompile Include="source\game\fps_display_module.cpp" />
     <ClCompile Include="source\game\game_application.cpp" />
     <ClCompile Include="source\game\player_module.cpp" />
     <ClCompile Include="source\main.cpp" />
@@ -189,10 +192,13 @@
     <ClInclude Include="include\isometric.h" />
     <ClInclude Include="source\application\application.h" />
     <ClInclude Include="source\application\application_setup.h" />
+    <ClInclude Include="source\assets\asset.h" />
+    <ClInclude Include="source\assets\asset_management.h" />
+    <ClInclude Include="source\assets\font.h" />
+    <ClInclude Include="source\assets\image.h" />
     <ClInclude Include="source\core\camera.h" />
     <ClInclude Include="source\core\game_object.h" />
     <ClInclude Include="source\core\graphics.h" />
-    <ClInclude Include="source\core\image.h" />
     <ClInclude Include="source\core\input.h" />
     <ClInclude Include="source\core\module.h" />
     <ClInclude Include="source\core\tile.h" />
@@ -201,6 +207,7 @@
     <ClInclude Include="source\core\transform.h" />
     <ClInclude Include="source\core\world.h" />
     <ClInclude Include="source\game\camera_module.h" />
+    <ClInclude Include="source\game\fps_display_module.h" />
     <ClInclude Include="source\game\game_application.h" />
     <ClInclude Include="source\game\player_module.h" />
     <ClInclude Include="source\tools\framerate.h" />

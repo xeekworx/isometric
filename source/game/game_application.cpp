@@ -1,6 +1,7 @@
 #include "game_application.h"
 
 using namespace isometric::game;
+using namespace isometric::assets;
 
 bool game_application::on_start()
 {
@@ -32,6 +33,9 @@ bool game_application::on_start()
     this->player_module->setup(this->map, this->world);
     this->player_module->set_player_location(SDL_FPoint{ 100.0f, 100.0f });
     register_module(this->player_module);
+
+    this->fps_display_module = module::create<isometric::game::fps_display_module>(true);
+    register_module(this->fps_display_module);
 
     return application::on_start();
 }

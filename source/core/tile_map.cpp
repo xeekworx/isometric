@@ -15,6 +15,12 @@ std::shared_ptr<tile_map> tile_map::create(unsigned map_width, unsigned map_heig
     new_tile_map->tile_height = tile_height;
     new_tile_map->tiles.resize(static_cast<size_t>(map_width * map_height));
 
+    SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Created tile map [ %u x %u / %llu tiles ], [ %u x %u tile size]",
+        new_tile_map->map_width, new_tile_map->map_height, 
+        new_tile_map->tiles.size(), 
+        new_tile_map->tile_width, new_tile_map->tile_height
+    );
+
     return new_tile_map;
 }
 

@@ -3,21 +3,33 @@
 #include "image.h"
 #include "../source/application/application.h"
 
-using namespace isometric;
+using namespace isometric::assets;
 
 image::image(const std::string& name, SDL_Texture* sdl_texture, SDL_Surface* sdl_surface)
-    : name(name), texture(sdl_texture), surface(sdl_surface)
+    : asset(name), texture(sdl_texture), surface(sdl_surface)
 {
 
 }
 
 image::~image()
 {
-    if (surface) SDL_FreeSurface(surface);
-    if (texture) SDL_DestroyTexture(texture);
+    clear();
 }
 
-std::shared_ptr<image> image::load(const std::string& name, const std::string& path)
+void isometric::assets::image::clear()
+{
+    if (surface) {
+        SDL_FreeSurface(surface);
+        surface = nullptr;
+    }
+
+    if (texture) {
+        SDL_DestroyTexture(texture);
+        texture = nullptr;
+    }
+}
+
+std::unique_ptr<image> image::load(const std::string& name, const std::string& path)
 {
     if (!application::get_app() || !application::get_app()->is_initialized()) {
         auto error_msg = std::string("Attempted to load image before an application object has been created and initialized");
@@ -42,15 +54,15 @@ std::shared_ptr<image> image::load(const std::string& name, const std::string& p
         return nullptr;
     }
 
-    return std::shared_ptr<image>(new image(name, texture, surface));
+    return std::move(std::unique_ptr<image>(new image(name, texture, surface)));
 }
 
-SDL_Texture* image::get_texture()
+SDL_Texture* image::get_texture() const
 {
     return texture;
 }
 
-SDL_Surface* image::get_surface()
+SDL_Surface* image::get_surface() const
 {
     return surface;
 }
@@ -67,7 +79,7 @@ unsigned image::get_height() const
     return rect.h;
 }
 
-SDL_Rect isometric::image::get_rect() const
+SDL_Rect image::get_rect() const
 {
     if (texture) {
         int width = 0, height = 0;
@@ -81,7 +93,7 @@ SDL_Rect isometric::image::get_rect() const
     return SDL_Rect();
 }
 
-SDL_FRect isometric::image::get_frect() const
+SDL_FRect image::get_frect() const
 {
     SDL_Rect rect = get_rect();
     return SDL_FRect(

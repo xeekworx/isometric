@@ -8,7 +8,7 @@ namespace isometric::game {
     private:
         std::shared_ptr<tile_map> map = nullptr;
         std::shared_ptr<world> world = nullptr;
-        SDL_FPoint location;
+        SDL_FPoint location = { 0.0f, 0.0f };
 
     protected:
         void on_registered() override;

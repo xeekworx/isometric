@@ -5,6 +5,7 @@
 #include <iostream>
 
 using namespace isometric;
+using namespace isometric::assets;
 
 std::shared_ptr<application> application::this_app = nullptr;
 
@@ -46,6 +47,9 @@ bool application::start()
 
     SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "Unregistering %llu modules", modules.size());
     unregister_all_modules();
+
+    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "Destroying asset manager");
+    asset_manager->shutdown();
 
     SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "Destroying SDL renderer");
     graphics->renderer = nullptr;
@@ -203,6 +207,11 @@ std::shared_ptr<graphics> application::get_graphics() const
     return graphics;
 }
 
+std::shared_ptr<isometric::assets::asset_management> isometric::application::get_asset_manager() const
+{
+    return asset_manager;
+}
+
 bool application::initialize()
 {
     SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "Application initializing");
@@ -264,7 +273,7 @@ bool application::initialize()
         }
 
         // --------------------------------------------------------------------
-        // SDL_RENDERER & GRAPHICS
+        // SDL_RENDERER, ASSET MANAGER, & GRAPHICS
 
         SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "Creating SDL renderer");
         Uint32 renderer_flags = setup.vertical_sync ? SDL_RENDERER_PRESENTVSYNC : 0;
@@ -273,7 +282,9 @@ bool application::initialize()
             throw(std::exception(error.str().c_str()));
         }
 
+        this->asset_manager = std::shared_ptr<asset_management>(new asset_management(renderer));
         this->graphics = std::shared_ptr<isometric::graphics>(new isometric::graphics(renderer));
+
     }
     catch (std::exception ex)
     {
