@@ -3,6 +3,7 @@
 #include <SDL.h>
 #include <SDL_ttf.h>
 #include "../assets/asset_management.h"
+#include "text_enums.h"
 
 namespace isometric {
 
@@ -25,12 +26,15 @@ namespace isometric {
         SDL_Renderer* get_renderer() { return renderer; }
 
         void set_color(uint32_t color);
-        uint32_t get_color();
+        uint32_t get_color() const;
+        SDL_Color get_sdl_color() const;
 
         void clear();
         void clear(uint32_t color);
 
-        void draw_text(const std::string& font_name, const std::string& text, const SDL_FPoint& point, bool align_right = false);
+        SDL_FRect size_text(const std::string& font_name, int point_size, const std::string& text, const SDL_FPoint& point = SDL_FPoint{ 0,0 });
+        void draw_text(const std::string& font_name, int point_size, const std::string& text, const SDL_Point& point, unsigned align = text_align_top | text_align_left);
+        void draw_text(const std::string& font_name, int point_size, const std::string& text, const SDL_Rect& destination, unsigned align = text_align_top | text_align_left, bool wrap = false);
     };
 
 }

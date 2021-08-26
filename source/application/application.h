@@ -3,7 +3,7 @@
 #include <memory>
 #include <list>
 #include "application_setup.h"
-#include "../source/core/graphics.h"
+#include "../source/graphics/graphics.h"
 #include "../source/core/input.h"
 #include "../source/core/module.h"
 #include "../tools/stopwatch.h"
@@ -50,6 +50,8 @@ namespace isometric {
 
         static std::shared_ptr<application> get_app() { return this_app; }
         const application_setup& get_setup() const;
+        SDL_Rect get_viewport() const;
+        SDL_FRect get_viewportf() const;
         std::shared_ptr<isometric::graphics> get_graphics() const;
         std::shared_ptr<isometric::assets::asset_management> get_asset_manager() const;
         const tools::framerate& get_framerate() const { return current_fps; }

@@ -24,6 +24,24 @@ const application_setup& application::get_setup() const
     return setup;
 }
 
+SDL_Rect isometric::application::get_viewport() const
+{
+    SDL_Rect viewport{ 0 };
+    SDL_RenderGetViewport(renderer, &viewport);
+    return viewport;
+}
+
+SDL_FRect isometric::application::get_viewportf() const
+{
+    SDL_Rect viewport = get_viewport();
+    return SDL_FRect{
+        static_cast<float>(viewport.x),
+        static_cast<float>(viewport.y),
+        static_cast<float>(viewport.w),
+        static_cast<float>(viewport.h)
+    };
+}
+
 bool application::start()
 {
     SDL_Log("Application [%s] starting", setup.name.c_str());

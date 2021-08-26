@@ -1,5 +1,7 @@
 #include "asset_management.h"
 #include "../application/application.h"
+#include <stdexcept>
+#include <format>
 
 using namespace isometric::assets;
 
@@ -23,7 +25,7 @@ const std::unique_ptr<asset>& asset_management::operator[](const std::string& na
     else
     {
         SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, "Asset not found in asset management: %s", name.c_str());
-        return nullptr;
+        throw std::runtime_error(std::format("Asset not found: '%s'", name));
     }
 }
 

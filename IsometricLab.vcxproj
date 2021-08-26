@@ -165,7 +165,6 @@
     <ClCompile Include="source\assets\image.cpp" />
     <ClCompile Include="source\core\camera.cpp" />
     <ClCompile Include="source\core\game_object.cpp" />
-    <ClCompile Include="source\core\graphics.cpp" />
     <ClCompile Include="source\core\input.cpp" />
     <ClCompile Include="source\core\module.cpp" />
     <ClCompile Include="source\core\tile_image.cpp" />
@@ -176,6 +175,7 @@
     <ClCompile Include="source\game\fps_display_module.cpp" />
     <ClCompile Include="source\game\game_application.cpp" />
     <ClCompile Include="source\game\player_module.cpp" />
+    <ClCompile Include="source\graphics\graphics.cpp" />
     <ClCompile Include="source\main.cpp" />
     <ClCompile Include="source\tools\random.cpp" />
   </ItemGroup>
@@ -198,7 +198,6 @@
     <ClInclude Include="source\assets\image.h" />
     <ClInclude Include="source\core\camera.h" />
     <ClInclude Include="source\core\game_object.h" />
-    <ClInclude Include="source\core\graphics.h" />
     <ClInclude Include="source\core\input.h" />
     <ClInclude Include="source\core\module.h" />
     <ClInclude Include="source\core\tile.h" />
@@ -210,6 +209,8 @@
     <ClInclude Include="source\game\fps_display_module.h" />
     <ClInclude Include="source\game\game_application.h" />
     <ClInclude Include="source\game\player_module.h" />
+    <ClInclude Include="source\graphics\graphics.h" />
+    <ClInclude Include="source\graphics\text_enums.h" />
     <ClInclude Include="source\tools\framerate.h" />
     <ClInclude Include="source\tools\random.h" />
     <ClInclude Include="source\tools\stopwatch.h" />

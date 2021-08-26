@@ -2,6 +2,7 @@
 #include <SDL_ttf.h>
 #include "font.h"
 #include "../source/application/application.h"
+#include <algorithm>
 
 using namespace isometric::assets;
 
@@ -34,10 +35,24 @@ std::unique_ptr<font> font::load(const std::string& name, const std::string& pat
             return nullptr;
         }
 
+        new_font->point_sizes.push_back(point_size);
         new_font->fonts[point_size] = sdl_font;
     }
 
     return std::move(new_font);
+}
+
+const std::vector<int>& isometric::assets::font::get_point_sizes() const
+{
+    return this->point_sizes;
+}
+
+int isometric::assets::font::get_closest_point_size(int point_size) const
+{
+    if (this->point_sizes.empty()) return 0;
+    else {
+        return (*std::upper_bound(point_sizes.begin(), point_sizes.end() - 1, point_size));
+    }
 }
 
 std::unique_ptr<font> font::load(const std::string& name, const std::string& path, int point_size)
@@ -55,7 +70,9 @@ TTF_Font* font::get_font(int point_size) const
         return fonts.at(point_size);
     }
     else {
-        return (*fonts.begin()).second;
+        int closest_point_size = get_closest_point_size(point_size);
+        TTF_Font* closest_match = fonts.at(closest_point_size);
+        return closest_match;
     }
 }
 
@@ -71,5 +88,6 @@ void font::clear()
         }
     }
 
+    point_sizes.clear();
     fonts.clear();
 }

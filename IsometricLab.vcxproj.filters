@@ -23,6 +23,9 @@
     <Filter Include="Asset Management">
       <UniqueIdentifier>{80892e51-dd4f-43d4-bf9b-f2dfb2cf568c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Graphics">
+      <UniqueIdentifier>{32052fc4-9c70-445c-a2c5-22bd1ace2ed5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\core\input.cpp">
@@ -47,9 +50,6 @@
       <Filter>Core</Filter>
     </ClCompile>
     <ClCompile Include="source\core\game_object.cpp">
-      <Filter>Core</Filter>
-    </ClCompile>
-    <ClCompile Include="source\core\graphics.cpp">
       <Filter>Core</Filter>
     </ClCompile>
     <ClCompile Include="source\application\application.cpp">
@@ -79,6 +79,9 @@
     </ClCompile>
     <ClCompile Include="source\game\fps_display_module.cpp">
       <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="source\graphics\graphics.cpp">
+      <Filter>Graphics</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -122,9 +125,6 @@
     <ClInclude Include="source\core\game_object.h">
       <Filter>Core</Filter>
     </ClInclude>
-    <ClInclude Include="source\core\graphics.h">
-      <Filter>Core</Filter>
-    </ClInclude>
     <ClInclude Include="source\application\application.h">
       <Filter>Application</Filter>
     </ClInclude>
@@ -164,6 +164,12 @@
     </ClInclude>
     <ClInclude Include="source\game\fps_display_module.h">
       <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="source\graphics\graphics.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="source\graphics\text_enums.h">
+      <Filter>Graphics</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
