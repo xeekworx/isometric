@@ -176,6 +176,7 @@
     <ClCompile Include="source\game\game_application.cpp" />
     <ClCompile Include="source\game\player_module.cpp" />
     <ClCompile Include="source\graphics\graphics.cpp" />
+    <ClCompile Include="source\graphics\simple_bitmap_font.cpp" />
     <ClCompile Include="source\main.cpp" />
     <ClCompile Include="source\tools\random.cpp" />
   </ItemGroup>
@@ -210,6 +211,7 @@
     <ClInclude Include="source\game\game_application.h" />
     <ClInclude Include="source\game\player_module.h" />
     <ClInclude Include="source\graphics\graphics.h" />
+    <ClInclude Include="source\graphics\simple_bitmap_font.h" />
     <ClInclude Include="source\graphics\text_enums.h" />
     <ClInclude Include="source\tools\framerate.h" />
     <ClInclude Include="source\tools\random.h" />

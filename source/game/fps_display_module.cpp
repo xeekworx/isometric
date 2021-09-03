@@ -11,14 +11,17 @@ using namespace isometric::tools;
 void fps_display_module::on_registered()
 {
     auto asset_mgr = application::get_app()->get_asset_manager();
-    auto fps_font = font::load("fps_font", "content/roboto/RobotoMono-Bold.ttf", std::vector<int>{ 16, 24, 32, 48 });
+    auto fps_font = font::load("fps_font", "content/roboto/RobotoMono-Bold.ttf", std::vector<int>{ 16, 24, 32, 48, 200 });
 
     std::vector<char> glyphs = { 'F', 'P', 'S', ':', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.' };
     std::unordered_map<char, SDL_Surface*> surfaces;
 
+    //bitmap_font = std::make_unique<simple_bitmap_font>(application::get_app()->get_graphics()->get_renderer(), fps_font->get_font(100), glyphs.data(), glyphs.size());
+    //bitmap_font = std::make_unique<simple_bitmap_font>(application::get_app()->get_graphics()->get_renderer(), fps_font->get_font(200), 0, 255);
+
     int x = 0, y = 0, overall_width = 0, overall_height = 0;
     for (char character : glyphs) {
-        SDL_Surface* surface = TTF_RenderGlyph_Blended(fps_font->get_font(100), character, SDL_Color{ 255, 255, 255, 255 });
+        SDL_Surface* surface = TTF_RenderGlyph_Blended(fps_font->get_font(32), character, SDL_Color{ 255, 255, 255, 255 });
         if (surface) {
             if (x + surface->w >= 2048) {
                 x = 0;
@@ -68,8 +71,13 @@ void fps_display_module::on_registered()
 
 void fps_display_module::on_unregister()
 {
-    auto asset_mgr = application::get_app()->get_asset_manager();
-    asset_mgr->unregister_asset("fps_font");
+    //if (bitmap_font) bitmap_font.reset();
+
+    auto app = application::get_app();
+    if (app) {
+        auto asset_mgr = app->get_asset_manager();
+        if (asset_mgr) asset_mgr->unregister_asset("fps_font");
+    }
 
     if (glyphs_texture) {
         SDL_DestroyTexture(glyphs_texture);

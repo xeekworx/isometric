@@ -134,10 +134,10 @@ void graphics::draw_text(const std::string& font_name, int point_size, const std
 
     SDL_Rect dest = SDL_Rect{ point.x, point.y, text_width, text_height };
 
-    if (align & text_align_center) dest.x += text_width / 2.0f;
+    if (align & text_align_center) dest.x += static_cast<int>(std::round(text_width / 2.0f));
     else if (align & text_align_right) dest.x += text_width;
     
-    if (align & text_align_vcenter) dest.y += text_height / 2.0f;
+    if (align & text_align_vcenter) dest.y += static_cast<int>(std::round(text_height / 2.0f));
     else if (align & text_align_bottom) dest.y += text_height;
 
     SDL_RenderCopy(renderer, texture, NULL, &dest);
