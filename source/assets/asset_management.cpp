@@ -17,7 +17,8 @@ asset_management::~asset_management()
     SDL_LogVerbose(SDL_LOG_CATEGORY_APPLICATION, "Asset management destructed");
 }
 
-const std::unique_ptr<asset>& asset_management::operator[](const std::string& name) {
+const std::unique_ptr<asset>& asset_management::operator[](const std::string& name)
+{
     if (asset_store.contains(name))
     {
         return asset_store.at(name);
@@ -31,14 +32,16 @@ const std::unique_ptr<asset>& asset_management::operator[](const std::string& na
 
 void asset_management::register_asset(std::unique_ptr<asset> new_asset)
 {
-    if (new_asset != nullptr) {
+    if (new_asset != nullptr)
+    {
         asset_store[new_asset->get_name()] = std::move(new_asset);
     }
 }
 
 bool isometric::assets::asset_management::unregister_asset(const std::string& name)
 {
-    if (asset_store.contains(name)) {
+    if (asset_store.contains(name))
+    {
         auto& asset = (*this)[name];
         asset->clear();
         asset_store.erase(name);

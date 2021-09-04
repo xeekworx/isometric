@@ -11,14 +11,14 @@ namespace isometric {
         unsigned image_id = 0;
         std::string name;
 
-        SDL_Texture * texture = NULL;
+        SDL_Texture* texture = NULL;
 
         unsigned source_x = 0;
         unsigned source_y = 0;
         unsigned source_w = 0;
         unsigned source_h = 0;
 
-        tile_image() { }
+        tile_image() {}
 
     public:
 
@@ -50,7 +50,7 @@ namespace isometric {
             return image_id;
         }
 
-        SDL_Texture * get_texture() const
+        SDL_Texture* get_texture() const
         {
             return texture;
         }

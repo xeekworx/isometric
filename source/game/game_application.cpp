@@ -12,20 +12,22 @@ bool game_application::on_start()
         0, 0 // current tile position x, y
     );
 
-    if (!load_map()) {
+    if (!load_map())
+    {
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Failed to load map");
         return false;
     }
-    else {
+    else
+    {
         SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Loaded map");
     }
 
     world = std::make_shared<isometric::world>(
         map,
         main_camera
-    );
+        );
 
-    this->camera_module = module::create<isometric::game::camera_module>(true); 
+    this->camera_module = module::create<isometric::game::camera_module>(true);
     this->camera_module->setup(map, world);
     register_module(this->camera_module);
 
@@ -66,7 +68,8 @@ bool isometric::game::game_application::load_map()
 
     map->add_layer("grass");
     unsigned grass_source_x = 0;
-    for (unsigned i = 1, grass_source_x = 0; i < 16; i++, grass_source_x += 64) {
+    for (unsigned i = 1, grass_source_x = 0; i < 16; i++, grass_source_x += 64)
+    {
 
         auto grass_tile_image = isometric::tile_image::create(
             "grass" + std::to_string(i), i,

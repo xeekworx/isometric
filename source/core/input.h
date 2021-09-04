@@ -7,11 +7,11 @@ namespace isometric {
     class input
     {
     private:
-        input() { } // Force static class
+        input() {} // Force static class
 
     public:
 
-        static const uint8_t * keyboard_state();
+        static const uint8_t* keyboard_state();
         static bool scancode_down(SDL_Scancode scancode);
         static bool keycode_down(SDL_Keycode key);
 

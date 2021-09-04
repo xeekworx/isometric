@@ -6,7 +6,8 @@ using namespace isometric::game;
 
 int main(int argc, char* argv[])
 {
-    try {
+    try
+    {
         application_setup setup;
         setup.name = "Isometric Lab";
         setup.background_color = 0x006bFFFF;
@@ -19,7 +20,8 @@ int main(int argc, char* argv[])
 
         app->start();
     }
-    catch (std::exception ex) {
+    catch (std::exception ex)
+    {
         return -1;
     }
 

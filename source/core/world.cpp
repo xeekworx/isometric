@@ -6,22 +6,24 @@
 using namespace isometric;
 
 world::world(std::shared_ptr<tile_map> map, std::shared_ptr<camera> main_camera) :
-    map(map), 
+    map(map),
     transform(main_camera, map)
 {
-    selected_world_tile = { 
-        std::numeric_limits<int>::max(), 
-        std::numeric_limits<int>::max() 
+    selected_world_tile = {
+        std::numeric_limits<int>::max(),
+        std::numeric_limits<int>::max()
     };
 
-    if (main_camera != nullptr) {
+    if (main_camera != nullptr)
+    {
         cameras.push_back(main_camera);
     }
 }
 
 std::shared_ptr<camera> world::get_main_camera() const
 {
-    for (auto& camera : cameras) {
+    for (auto& camera : cameras)
+    {
         if (camera->is_enabled()) return camera;
     }
 
@@ -36,9 +38,10 @@ void world::update(double delta_time)
     update_called = true;
 }
 
-void world::render(SDL_Renderer * renderer, double delta_time)
+void world::render(SDL_Renderer* renderer, double delta_time)
 {
-    if (!update_called) {
+    if (!update_called)
+    {
         std::cout << "WARN: Update wasn't called before the world was rendered! Transform may be invalid as a result." << std::endl;
     }
 
@@ -71,8 +74,9 @@ void world::render(SDL_Renderer * renderer, double delta_time)
     max_tiles_horiz = std::min(max_tiles_horiz, map->get_map_width());
     max_tiles_vert = std::min(max_tiles_vert, map->get_map_height());
 
-    for (float tile_y = camera->get_current_y(); tile_y < max_tiles_vert; tile_y++) {
-        for (float tile_x = camera->get_current_x(); tile_x < max_tiles_horiz; tile_x++) 
+    for (float tile_y = camera->get_current_y(); tile_y < max_tiles_vert; tile_y++)
+    {
+        for (float tile_x = camera->get_current_x(); tile_x < max_tiles_horiz; tile_x++)
         {
             iterated_tile_count++;
 
@@ -82,7 +86,7 @@ void world::render(SDL_Renderer * renderer, double delta_time)
             bool is_selected = false;
 
             // Render image (if there is one) for every layer:
-            for (unsigned layer_id = 0; layer_id < map->get_layers().size(); layer_id++) 
+            for (unsigned layer_id = 0; layer_id < map->get_layers().size(); layer_id++)
             {
                 if (current_tile && current_tile->has_image(layer_id))
                 {
@@ -122,7 +126,8 @@ void world::render(SDL_Renderer * renderer, double delta_time)
                 }
 
                 // Set the currently selected tile based on the position of the mouse cursor:
-                if (transform.tile_hittest_by_viewport(screen_pos, input::mouse_position())) {
+                if (transform.tile_hittest_by_viewport(screen_pos, input::mouse_position()))
+                {
                     set_selection(tile_point);
                     is_selected = true;
                 }
@@ -152,7 +157,8 @@ void world::render(SDL_Renderer * renderer, double delta_time)
     }
 
     // Render game objects:
-    for (const auto& obj : objects) {
+    for (const auto& obj : objects)
+    {
         if (obj) obj->on_render(renderer, delta_time);
     }
 
@@ -187,12 +193,13 @@ void world::reset_selection()
     selected_world_tile.y = std::numeric_limits<int>::max();
 }
 
-unsigned world::get_max_horizontal_tiles() const 
+unsigned world::get_max_horizontal_tiles() const
 {
     auto camera = get_main_camera();
     unsigned max_tiles_horiz = 0;
 
-    if (camera) {
+    if (camera)
+    {
         max_tiles_horiz = camera->get_width() / map->get_tile_width();
     }
 
@@ -204,7 +211,8 @@ unsigned world::get_max_vertical_tiles() const
     auto camera = get_main_camera();
     unsigned max_tiles_vert = 0;
 
-    if (camera) {
+    if (camera)
+    {
         max_tiles_vert = static_cast<unsigned>(std::round(camera->get_height() / (map->get_tile_height() / 2.0f)));
     }
 
@@ -213,7 +221,8 @@ unsigned world::get_max_vertical_tiles() const
 
 void isometric::world::add_object(std::shared_ptr<game_object> obj)
 {
-    if (obj) {
+    if (obj)
+    {
         obj->setup_transform(get_main_camera(), map);
         objects.push_back(obj);
     }
@@ -221,7 +230,8 @@ void isometric::world::add_object(std::shared_ptr<game_object> obj)
 
 void isometric::world::remove_object(std::shared_ptr<game_object> obj)
 {
-    if (obj) {
+    if (obj)
+    {
         objects.remove(obj);
     }
 }

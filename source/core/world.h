@@ -26,7 +26,7 @@ namespace isometric {
         std::shared_ptr<camera> get_main_camera() const;
 
         void update(double delta_time);
-        void render(SDL_Renderer * renderer, double delta_time);
+        void render(SDL_Renderer* renderer, double delta_time);
 
         void set_selection(const SDL_Point& tile_point);
         const SDL_Point& get_selection() const;
@@ -36,7 +36,8 @@ namespace isometric {
         unsigned get_max_horizontal_tiles() const;
         unsigned get_max_vertical_tiles() const;
 
-        const isometric::transform& get_transform() const {
+        const isometric::transform& get_transform() const
+        {
             return this->transform;
         }
 

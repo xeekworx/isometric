@@ -8,10 +8,11 @@ namespace isometric::assets {
         std::string name;
 
     public:
-        asset(const std::string& name) : name(name) { }
+        asset(const std::string& name) : name(name) {}
         virtual ~asset() {}
 
-        const std::string& get_name() const {
+        const std::string& get_name() const
+        {
             return name;
         }
 

@@ -3,7 +3,7 @@
 #include <vector>
 #include <tuple>
 
-using namespace isometric::bitmap_font;
+using namespace isometric::rendering;
 
 static void generate_glyph_surfaces(TTF_Font* font, const std::vector<char>& glyphs, bitmap_font_info& font_info);
 static void generate_glyph_srcrects(bitmap_font_info& font_info);
@@ -16,7 +16,8 @@ simple_bitmap_font::simple_bitmap_font(SDL_Renderer* renderer, TTF_Font* font, u
     std::vector<char> glyphs(num_glyphs);
 
     unsigned char current_glyph = start_glyph;
-    for (size_t i = 0; i < num_glyphs; current_glyph++, i++) {
+    for (size_t i = 0; i < num_glyphs; current_glyph++, i++)
+    {
         glyphs[i] = static_cast<char>(current_glyph);
     }
 
@@ -84,7 +85,11 @@ const SDL_Color& simple_bitmap_font::get_color() const
     return current_color;
 }
 
-void simple_bitmap_font::draw(const std::string& text, const SDL_Point& point) const
+void simple_bitmap_font::draw(
+    const std::string& text,
+    const SDL_Point& point,
+    content_align align
+) const
 {
     SDL_Rect dstrect = { point.x, point.y, 0, 0 };
     draw(text, dstrect);
@@ -93,12 +98,12 @@ void simple_bitmap_font::draw(const std::string& text, const SDL_Point& point) c
 void simple_bitmap_font::draw(
     const std::string& text,
     const SDL_Rect& dstrect,
-    text_valign valign,
-    text_halign halign,
+    content_align align,
     bool no_clip
 ) const
 {
-    for (const auto& texture_info : font_info.textures) {
+    for (const auto& texture_info : font_info.textures)
+    {
         SDL_Texture* texture = std::get<0>(texture_info);
         SDL_SetTextureColorMod(texture, current_color.r, current_color.g, current_color.b);
         SDL_SetTextureAlphaMod(texture, current_color.a);
@@ -106,46 +111,62 @@ void simple_bitmap_font::draw(
 
     SDL_Rect measured_rect{};
     // No point in measuring unless the alignment requires it
-    if (halign != text_halign::left || valign != text_valign::top) {
+    if (align != content_align::top_left)
+    {
         measured_rect = measure(text, SDL_Point{ dstrect.x, dstrect.y });
     }
 
     // To keep up with the current glyph drawing position:
     SDL_Rect glyph_dstrect{ dstrect.x, dstrect.y };
 
-    // Adjust the starting glyph drawing position if alignment requires it:
-    switch (halign) {
-    case text_halign::center:
-        glyph_dstrect.x = dstrect.x + static_cast<int>(dstrect.w / 2.0f - measured_rect.w / 2.0f);
+    // Horizontal Alignment:
+    switch (align)
+    {
+    case content_align::top_center:
+    case content_align::middle_center:
+    case content_align::bottom_center:
+        glyph_dstrect.x += static_cast<int>(std::round(dstrect.w / 2.0 - measured_rect.w / 2.0));
         break;
-    case text_halign::right:
-        glyph_dstrect.x = dstrect.x + dstrect.w - measured_rect.w - 1;
+    case content_align::top_right:
+    case content_align::middle_right:
+    case content_align::bottom_right:
+        glyph_dstrect.x += dstrect.w - measured_rect.w;
         break;
     }
-    switch (valign) {
-    case text_valign::center:
-        glyph_dstrect.y = dstrect.y + static_cast<int>(dstrect.h / 2.0f - measured_rect.h / 2.0f);
+
+    // Vertical Alignment:
+    switch (align)
+    {
+    case content_align::middle_left:
+    case content_align::middle_center:
+    case content_align::middle_right:
+        glyph_dstrect.y += static_cast<int>(std::round(dstrect.h / 2.0 - measured_rect.h / 2.0));
         break;
-    case text_valign::bottom:
-        glyph_dstrect.y = dstrect.y + dstrect.h - measured_rect.h - 1;
+    case content_align::bottom_left:
+    case content_align::bottom_center:
+    case content_align::bottom_right:
+        glyph_dstrect.y += dstrect.h - measured_rect.h;
         break;
     }
 
     // Text rendering:
-    for (char character : text) {
+    for (char character : text)
+    {
         if (!font_info.glyphs.contains(character)) continue;
 
         const auto& info = font_info.glyphs.at(character);
         glyph_dstrect = { glyph_dstrect.x, glyph_dstrect.y, info.srcrect.w, info.srcrect.h };
 
-        if (!no_clip && !SDL_HasIntersection(&glyph_dstrect, &dstrect)) {
+        if (!no_clip && !SDL_HasIntersection(&glyph_dstrect, &dstrect))
+        {
             break;
         }
 
         if (info.texture_index < font_info.textures.size())
         {
             SDL_Texture* texture = std::get<0>(font_info.textures[info.texture_index]);
-            if (texture) {
+            if (texture)
+            {
                 SDL_RenderCopy(renderer, texture, &info.srcrect, &glyph_dstrect);
             }
         }
@@ -161,12 +182,14 @@ SDL_Rect simple_bitmap_font::measure(
 {
     int width = 0, height = 0;
 
-    for (char character : text) {
+    for (char character : text)
+    {
         if (font_info.glyphs.contains(character))
         {
             const auto& info = font_info.glyphs.at(character);
             width += info.srcrect.w;
-            if (info.srcrect.h > height) {
+            if (info.srcrect.h > height)
+            {
                 height = info.srcrect.h;
             }
         }
@@ -184,9 +207,11 @@ void simple_bitmap_font::create(const std::vector<char>& glyphs)
 
 void simple_bitmap_font::destroy()
 {
-    for (auto& texture_info : font_info.textures) {
+    for (auto& texture_info : font_info.textures)
+    {
         auto& texture = std::get<0>(texture_info);
-        if (texture) {
+        if (texture)
+        {
             SDL_DestroyTexture(texture);
             texture = nullptr;
         }
@@ -195,7 +220,8 @@ void simple_bitmap_font::destroy()
     font_info.textures.clear();
     font_info.glyphs.clear();
 
-    if (destroy_font && this->sdl_font) {
+    if (destroy_font && this->sdl_font)
+    {
         TTF_CloseFont(this->sdl_font);
         this->sdl_font = nullptr;
     }
@@ -210,9 +236,11 @@ static void generate_glyph_surfaces(
     if (!font || glyphs.empty()) return;
     font_info.glyphs.clear();
 
-    for (char character : glyphs) {
+    for (char character : glyphs)
+    {
         SDL_Surface* surface = TTF_RenderGlyph_Blended(font, character, SDL_Color{ 255, 255, 255, 255 });
-        if (surface) {
+        if (surface)
+        {
             font_info.glyphs[character] = glyph_info{
                 surface,
                 SDL_Rect{ 0, 0, surface->w, surface->h },
@@ -233,7 +261,8 @@ static void generate_glyph_srcrects(
     size_t texture_index = 0;
     int x = 0, y = 0, row_height = 0;
 
-    for (auto& pair : font_info.glyphs) {
+    for (auto& pair : font_info.glyphs)
+    {
         char character = pair.first;
         glyph_info& glyph = pair.second;
 
@@ -242,7 +271,8 @@ static void generate_glyph_srcrects(
             row_height = glyph.surface->h;
 
         // If the farthest x-extent has been reached, start a new row:
-        if (x + glyph.surface->w >= max_texture_width) {
+        if (x + glyph.surface->w >= max_texture_width)
+        {
             x = 0;
             y += row_height;
             row_height = glyph.surface->h;
@@ -250,7 +280,8 @@ static void generate_glyph_srcrects(
 
         // If the farthest y-extent has been reached, configure the texture's dimensions and move onto the next 
         // texture:
-        if (y + glyph.surface->h >= max_texture_height) {
+        if (y + glyph.surface->h >= max_texture_height)
+        {
             font_info.textures.push_back(
                 std::make_tuple<SDL_Texture*, SDL_Rect>(
                     nullptr,
@@ -275,7 +306,8 @@ static void generate_glyph_srcrects(
     }
 
     // The last texture's dimension needs to be setup after the loop:
-    if (texture_width > 0 && texture_height > 0) {
+    if (texture_width > 0 && texture_height > 0)
+    {
         font_info.textures.push_back(
             std::make_tuple<SDL_Texture*, SDL_Rect>(
                 nullptr,
@@ -324,7 +356,8 @@ static void generate_glyph_textures(
             // anti-aliasing even though it's 0,0,0,0
             SDL_SetSurfaceBlendMode(glyph.surface, SDL_BLENDMODE_NONE);
             SDL_BlitSurface(glyph.surface, &srcrect, dst, &dstrect);
-            if (free_glyph_surfaces) {
+            if (free_glyph_surfaces)
+            {
                 SDL_FreeSurface(glyph.surface);
                 glyph.surface = nullptr;
             }
@@ -336,7 +369,8 @@ static void generate_glyph_textures(
         auto& texture = std::get<0>(font_info.textures[texture_index]);
         auto& surface = atlas_surfaces[texture_index];
 
-        if (surface) {
+        if (surface)
+        {
             texture = SDL_CreateTextureFromSurface(renderer, surface);
             // For testing, output the glyph atlas as an image file. Don't forget to #include <SDL_image.h>
             // IMG_SavePNG(surface, std::format("./simple_font.{}.png", texture_index).c_str());

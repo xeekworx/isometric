@@ -14,7 +14,7 @@ namespace isometric {
     public:
         tile(bool passable = true, bool enabled = true) : passable(passable), enabled(enabled),
             empty(false)
-        { }
+        {}
 
         bool is_empty() const
         {
@@ -26,7 +26,7 @@ namespace isometric {
             return passable;
         }
 
-        bool is_enabled() const 
+        bool is_enabled() const
         {
             return enabled;
         }

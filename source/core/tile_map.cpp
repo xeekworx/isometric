@@ -16,8 +16,8 @@ std::shared_ptr<tile_map> tile_map::create(unsigned map_width, unsigned map_heig
     new_tile_map->tiles.resize(static_cast<size_t>(map_width * map_height));
 
     SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION, "Created tile map [ %u x %u / %llu tiles ], [ %u x %u tile size]",
-        new_tile_map->map_width, new_tile_map->map_height, 
-        new_tile_map->tiles.size(), 
+        new_tile_map->map_width, new_tile_map->map_height,
+        new_tile_map->tiles.size(),
         new_tile_map->tile_width, new_tile_map->tile_height
     );
 
@@ -32,11 +32,11 @@ unsigned tile_map::add_image(std::shared_ptr<tile_image> image)
 
 std::shared_ptr<tile_image> tile_map::get_image(unsigned id) const
 {
-    if (tile_images.contains(id)) 
+    if (tile_images.contains(id))
     {
         return tile_images.at(id);
     }
-    else 
+    else
     {
         return nullptr;
     }
@@ -54,7 +54,7 @@ bool tile_map::has_selection_image() const
 
 std::shared_ptr<tile_image> tile_map::get_selection_image() const
 {
-    if (has_selection_image()) 
+    if (has_selection_image())
     {
         return tile_images.at(selection_tile_image);
     }
@@ -89,7 +89,7 @@ unsigned tile_map::get_layer_id(const std::string& layer_name) const
     {
         return static_cast<unsigned>(std::distance(layers.begin(), iter));
     }
-    else 
+    else
     {
         return std::numeric_limits<unsigned>::max();
     }
@@ -135,7 +135,7 @@ tile* tile_map::get_tile(unsigned x, unsigned y)
 {
     unsigned tile_index = x + y * get_map_width();
 
-    if (tile_index >= 0 && tile_index < tiles.size()) 
+    if (tile_index >= 0 && tile_index < tiles.size())
     {
         return &tiles[tile_index];
     }
@@ -170,7 +170,7 @@ const std::vector<unsigned>& tile_map::get_layer_default_images(const std::strin
 
 unsigned tile_map::get_random_layer_default_image(const std::string& layer_name) const
 {
-    if (layer_has_default_images(layer_name)) 
+    if (layer_has_default_images(layer_name))
     {
         unsigned random_index = random::range(0U, (unsigned)layer_default_images.at(layer_name).size() - 1U);
         return layer_default_images.at(layer_name)[random_index];
@@ -188,16 +188,17 @@ unsigned tile_map::get_random_layer_default_image(unsigned layer_id) const
 
 bool tile_map::layer_has_default_images(const std::string& layer_name) const
 {
-    return 
-        layer_default_images.contains(layer_name) && 
+    return
+        layer_default_images.contains(layer_name) &&
         layer_default_images.at(layer_name).size() > 0;
 }
 
 bool tile_map::layer_has_default_images(unsigned layer_id) const
 {
     if (layer_id >= layers.size()) return false;
-    else {
-        auto &layer_name = layers[layer_id];
+    else
+    {
+        auto& layer_name = layers[layer_id];
         return layer_has_default_images(layer_name);
     }
 }

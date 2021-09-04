@@ -34,16 +34,20 @@ void player_module::on_update(double delta_time)
 {
     constexpr double speed = 50.0; // Pixels per second of movement
 
-    if (input::keycode_down(SDLK_a)) {
+    if (input::keycode_down(SDLK_a))
+    {
         location.x -= static_cast<float>(speed * delta_time);
     }
-    if (input::keycode_down(SDLK_d)) {
+    if (input::keycode_down(SDLK_d))
+    {
         location.x += static_cast<float>(speed * delta_time);
     }
-    if (input::keycode_down(SDLK_w)) {
+    if (input::keycode_down(SDLK_w))
+    {
         location.y -= static_cast<float>(speed * delta_time);
     }
-    if (input::keycode_down(SDLK_s)) {
+    if (input::keycode_down(SDLK_s))
+    {
         location.y += static_cast<float>(speed * delta_time);
     }
 }

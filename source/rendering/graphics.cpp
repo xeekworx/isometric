@@ -2,7 +2,7 @@
 #include "../application/application.h"
 #include <algorithm>
 
-using namespace isometric;
+using namespace isometric::rendering;
 
 graphics::graphics(SDL_Renderer* renderer) : renderer(renderer)
 {
@@ -55,7 +55,7 @@ void graphics::set_color(uint32_t color)
     );
 }
 
-uint32_t isometric::graphics::get_color() const
+uint32_t graphics::get_color() const
 {
     SDL_Color draw_color = get_sdl_color();
 
@@ -66,7 +66,7 @@ uint32_t isometric::graphics::get_color() const
         (draw_color.r << 24);
 }
 
-SDL_Color isometric::graphics::get_sdl_color() const
+SDL_Color graphics::get_sdl_color() const
 {
     if (!has_sanity()) return { 0 };
 
@@ -97,7 +97,11 @@ void graphics::clear(uint32_t color)
     SDL_RenderClear(renderer);
 }
 
-SDL_FRect graphics::size_text(const std::string& font_name, int point_size, const std::string& text, const SDL_FPoint& point)
+SDL_FRect graphics::size_text(
+    const std::string& font_name, int point_size,
+    const std::string& text,
+    const SDL_FPoint& point
+)
 {
     auto& asset = (*this->asset_manager)[font_name];
     if (!asset) return { 0 };
@@ -110,7 +114,12 @@ SDL_FRect graphics::size_text(const std::string& font_name, int point_size, cons
     return SDL_FRect{ point.x, point.y, static_cast<float>(width), static_cast<float>(height) };
 }
 
-void graphics::draw_text(const std::string& font_name, int point_size, const std::string& text, const SDL_Point& point, text_align align)
+void graphics::draw_text(
+    const std::string& font_name, int point_size,
+    const std::string& text,
+    const SDL_Point& point,
+    content_align align
+)
 {
     auto& asset = (*this->asset_manager)[font_name];
     if (!asset) return;
@@ -136,28 +145,28 @@ void graphics::draw_text(const std::string& font_name, int point_size, const std
 
     // Horizontal Alignment:
     switch (align) {
-    case text_align::top_center:
-    case text_align::middle_center:
-    case text_align::bottom_center:
+    case content_align::top_center:
+    case content_align::middle_center:
+    case content_align::bottom_center:
         dest.x += static_cast<int>(std::round(text_width / 2.0f));
         break;
-    case text_align::top_right:
-    case text_align::middle_right:
-    case text_align::bottom_right:
+    case content_align::top_right:
+    case content_align::middle_right:
+    case content_align::bottom_right:
         dest.x += text_width;
         break;
     }
     
     // Vertical Alignment:
     switch (align) {
-    case text_align::middle_left:
-    case text_align::middle_center:
-    case text_align::middle_right:
+    case content_align::middle_left:
+    case content_align::middle_center:
+    case content_align::middle_right:
         dest.y += static_cast<int>(std::round(text_height / 2.0f));
         break;
-    case text_align::bottom_left:
-    case text_align::bottom_center:
-    case text_align::bottom_right:
+    case content_align::bottom_left:
+    case content_align::bottom_center:
+    case content_align::bottom_right:
         dest.y += text_height;
         break;
     }
@@ -166,7 +175,13 @@ void graphics::draw_text(const std::string& font_name, int point_size, const std
     SDL_DestroyTexture(texture);
 }
 
-void graphics::draw_text(const std::string& font_name, int point_size, const std::string& text, const SDL_Rect& destination, text_align align, bool wrap)
+void graphics::draw_text(
+    const std::string& font_name, int point_size,
+    const std::string& text,
+    const SDL_Rect& destination,
+    content_align align,
+    bool wrap
+)
 {
     auto& asset = (*this->asset_manager)[font_name];
     if (!asset) return;
@@ -197,28 +212,28 @@ void graphics::draw_text(const std::string& font_name, int point_size, const std
 
     // Horizontal Alignment:
     switch (align) {
-    case text_align::top_center:
-    case text_align::middle_center:
-    case text_align::bottom_center:
+    case content_align::top_center:
+    case content_align::middle_center:
+    case content_align::bottom_center:
         real_dest.x += static_cast<int>(std::round(destination.w / 2.0 - text_width / 2.0));
         break;
-    case text_align::top_right:
-    case text_align::middle_right:
-    case text_align::bottom_right:
+    case content_align::top_right:
+    case content_align::middle_right:
+    case content_align::bottom_right:
         real_dest.x += destination.w - text_width;
         break;
     }
 
     // Vertical Alignment:
     switch (align) {
-    case text_align::middle_left:
-    case text_align::middle_center:
-    case text_align::middle_right:
+    case content_align::middle_left:
+    case content_align::middle_center:
+    case content_align::middle_right:
         real_dest.y += static_cast<int>(std::round(destination.h / 2.0 - text_height / 2.0));
         break;
-    case text_align::bottom_left:
-    case text_align::bottom_center:
-    case text_align::bottom_right:
+    case content_align::bottom_left:
+    case content_align::bottom_center:
+    case content_align::bottom_right:
         real_dest.y += destination.h - text_height;
         break;
     }

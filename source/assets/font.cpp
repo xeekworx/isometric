@@ -19,7 +19,8 @@ font::~font()
 
 std::unique_ptr<font> font::load(const std::string& name, const std::string& path, const std::vector<int>& point_sizes)
 {
-    if (!application::get_app() || !application::get_app()->is_initialized()) {
+    if (!application::get_app() || !application::get_app()->is_initialized())
+    {
         auto error_msg = std::string("Attempted to load image before an application object has been created and initialized");
         SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, error_msg.c_str());
         throw std::exception(error_msg.c_str());
@@ -27,9 +28,11 @@ std::unique_ptr<font> font::load(const std::string& name, const std::string& pat
 
     auto new_font = std::unique_ptr<font>(new font(name));
 
-    for (int point_size : point_sizes) {
+    for (int point_size : point_sizes)
+    {
         TTF_Font* sdl_font = TTF_OpenFont(path.c_str(), point_size);
-        if (sdl_font == NULL) {
+        if (sdl_font == NULL)
+        {
             SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Failed to load font named [%s] with point size [%d] from '%s'", name.c_str(), point_size, path.c_str());
             new_font.reset();
             return nullptr;
@@ -50,7 +53,8 @@ const std::vector<int>& isometric::assets::font::get_point_sizes() const
 int isometric::assets::font::get_closest_point_size(int point_size) const
 {
     if (this->point_sizes.empty()) return 0;
-    else {
+    else
+    {
         return (*std::upper_bound(point_sizes.begin(), point_sizes.end() - 1, point_size));
     }
 }
@@ -63,13 +67,16 @@ std::unique_ptr<font> font::load(const std::string& name, const std::string& pat
 
 TTF_Font* font::get_font(int point_size) const
 {
-    if (fonts.empty()) {
+    if (fonts.empty())
+    {
         return nullptr;
     }
-    else if (fonts.contains(point_size)) {
+    else if (fonts.contains(point_size))
+    {
         return fonts.at(point_size);
     }
-    else {
+    else
+    {
         int closest_point_size = get_closest_point_size(point_size);
         TTF_Font* closest_match = fonts.at(closest_point_size);
         return closest_match;
@@ -78,11 +85,13 @@ TTF_Font* font::get_font(int point_size) const
 
 void font::clear()
 {
-    for (auto& pair : fonts) {
+    for (auto& pair : fonts)
+    {
         int point_size = pair.first;
         TTF_Font* sdl_font = pair.second;
 
-        if (sdl_font) {
+        if (sdl_font)
+        {
             TTF_CloseFont(sdl_font);
             sdl_font = nullptr;
         }

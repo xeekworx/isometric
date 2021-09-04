@@ -37,7 +37,8 @@ bool transform::has_sanity() const
 {
     bool sanity = main_camera && map;
 
-    if (!sanity) {
+    if (!sanity)
+    {
         SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, "transform lacks sanity (missing camera and/or map)");
     }
 
@@ -55,7 +56,7 @@ SDL_FPoint transform::world_tile_to_world_pixels(const SDL_Point& tile_point) co
             static_cast<int>(tile_point.y) % 2 == 0             // Is this an even tile?
             ? -static_cast<int>(map->get_tile_width()) / 2.0f   // True:  Offset the tile half a tile to the left
             : 0.0f                                              // False: Do not offset the tile
-        );
+            );
 
     // The y coordinates are multiplied by half the tile size because tiles in an isometric map are partially
     // overlapping.
@@ -76,7 +77,7 @@ SDL_Point transform::world_pixels_to_world_tile(const SDL_FPoint& point) const
         y % 2 == 0
         ? -static_cast<int>(map->get_tile_width()) / 2.0f
         : 0.0f
-    );
+        );
 
     // Increase precision of the tile point by doing a hit test of tiles in the general area:
     SDL_Point tile_points[] = {
@@ -155,18 +156,21 @@ bool transform::tile_hittest_by_viewport(const SDL_FPoint& tile_viewport_point, 
 
     float row_width = 2.0f + translated_point.y * 4.0f;
 
-    if (translated_point.y < map->get_tile_height() / 2.0f) { // Top portion of diamond
-        // The width of the diamond pixels for each row +4 more than the previous one starting at 2
+    if (translated_point.y < map->get_tile_height() / 2.0f)
+    { // Top portion of diamond
+// The width of the diamond pixels for each row +4 more than the previous one starting at 2
         row_width = 2.0f + translated_point.y * 4.0f;
     }
-    else { // Lower portion of diamond
+    else
+    { // Lower portion of diamond
         row_width = 2.0f + ((map->get_tile_height() - translated_point.y) - 1) * 4.0f;
     }
 
     float row_start = map->get_tile_width() / 2.0f - row_width / 2.0f;
     float row_end = row_start + row_width;
 
-    if (translated_point.x >= row_start - 1 && translated_point.x < row_end - 1) {
+    if (translated_point.x >= row_start - 1 && translated_point.x < row_end - 1)
+    {
         return true;
     }
 

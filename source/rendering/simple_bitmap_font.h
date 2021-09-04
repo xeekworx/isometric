@@ -3,8 +3,9 @@
 #include <SDL_ttf.h>
 #include <unordered_map>
 #include <vector>
+#include "../enumerations/content_align.h"
 
-namespace isometric::bitmap_font {
+namespace isometric::rendering {
 
     struct glyph_info
     {
@@ -17,9 +18,6 @@ namespace isometric::bitmap_font {
         std::vector<std::tuple<SDL_Texture*, SDL_Rect>> textures;
         std::unordered_map<char, glyph_info> glyphs;
     };
-
-    enum class text_halign { left, center, right, default_align = left };
-    enum class text_valign { top, center, bottom, default_align = top };
 
     class simple_bitmap_font
     {
@@ -47,14 +45,14 @@ namespace isometric::bitmap_font {
 
         void draw(
             const std::string& text,
-            const SDL_Point& point
+            const SDL_Point& point,
+            content_align align = content_align::top_left
         ) const;
 
         void draw(
             const std::string& text,
             const SDL_Rect& dstrect,
-            text_valign valign = text_valign::top,
-            text_halign halign = text_halign::left,
+            content_align align = content_align::top_left,
             bool no_clip = true
         ) const;
 

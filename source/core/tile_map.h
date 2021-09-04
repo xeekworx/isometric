@@ -22,7 +22,7 @@ namespace isometric {
         std::unordered_map<std::string, std::vector<unsigned>> layer_default_images;
         std::vector<std::string> layers;
 
-        tile_map() { }
+        tile_map() {}
 
     public:
         static std::shared_ptr<tile_map> create(unsigned map_width, unsigned map_height, unsigned tile_width, unsigned tile_height);

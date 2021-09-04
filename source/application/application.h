@@ -3,7 +3,7 @@
 #include <memory>
 #include <list>
 #include "application_setup.h"
-#include "../source/graphics/graphics.h"
+#include "../source/rendering/graphics.h"
 #include "../source/core/input.h"
 #include "../source/core/module.h"
 #include "../tools/stopwatch.h"
@@ -30,8 +30,8 @@ namespace isometric {
         SDL_Renderer* renderer = nullptr;
         SDL_Window* window = nullptr;
 
-        std::shared_ptr<isometric::assets::asset_management> asset_manager = nullptr;
-        std::shared_ptr<isometric::graphics> graphics = nullptr;
+        std::shared_ptr<assets::asset_management> asset_manager = nullptr;
+        std::shared_ptr<rendering::graphics> graphics = nullptr;
         std::list<std::shared_ptr<module>> modules;
 
     public:
@@ -53,8 +53,8 @@ namespace isometric {
         SDL_Rect get_viewport() const;
         SDL_FRect get_viewportf() const;
         SDL_Renderer* get_renderer() const;
-        std::shared_ptr<isometric::graphics> get_graphics() const;
-        std::shared_ptr<isometric::assets::asset_management> get_asset_manager() const;
+        std::shared_ptr<rendering::graphics> get_graphics() const;
+        std::shared_ptr<assets::asset_management> get_asset_manager() const;
         const tools::framerate& get_framerate() const { return current_fps; }
         bool is_initialized() const { return initialized; }
 
@@ -90,7 +90,8 @@ namespace isometric {
     {
         if (setup.verbose_logging) SDL_LogSetAllPriority(SDL_LOG_PRIORITY_VERBOSE);
 
-        if (application::this_app) {
+        if (application::this_app)
+        {
             SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Application instance already exists when creating '%s'", setup.name.c_str());
             throw std::exception("Application instance already exists");
         }

@@ -9,7 +9,7 @@ namespace isometric::tools {
         static std::random_device rd;
         static std::mt19937 gen;
 
-        random() { } // Force as a static class
+        random() {} // Force as a static class
 
     public:
         static int range(int min_inclusive, int max_inclusive);

@@ -3,7 +3,7 @@
 
 using namespace isometric;
 
-const uint8_t * input::keyboard_state()
+const uint8_t* input::keyboard_state()
 {
     return SDL_GetKeyboardState(NULL);
 }

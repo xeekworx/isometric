@@ -1,13 +1,12 @@
 #include "fps_display_module.h"
 #include <algorithm>
 #include <format>
-#include "../assets/asset_management.h"
 
 using namespace isometric;
 using namespace isometric::game;
 using namespace isometric::assets;
 using namespace isometric::tools;
-using namespace isometric::bitmap_font;
+using namespace isometric::rendering;
 
 void fps_display_module::on_registered()
 {
@@ -30,7 +29,8 @@ void fps_display_module::on_unregister()
     if (bitmap_font) bitmap_font.reset();
 
     auto app = application::get_app();
-    if (app) {
+    if (app)
+    {
         auto asset_mgr = app->get_asset_manager();
         if (asset_mgr) asset_mgr->unregister_asset("fps_font");
     }
@@ -52,7 +52,8 @@ void fps_display_module::on_late_update(double delta_time)
     static double elapsed_since_last_update = 0.0;
     elapsed_since_last_update += delta_time;
 
-    if (elapsed_since_last_update >= update_interval) {
+    if (elapsed_since_last_update >= update_interval)
+    {
         elapsed_since_last_update = 0.0;
         current_framerate = framerate.get();
     }
@@ -63,52 +64,22 @@ void fps_display_module::on_late_update(double delta_time)
     viewport.w -= margin * 2;
     viewport.h -= margin * 2;
 
-    text_valign valign = text_valign::default_align;
-    text_halign halign = text_halign::default_align;
-    switch (position) {
-    case fps_display_position::top_left:
-        valign = text_valign::top;
-        halign = text_halign::left;
-        break;
-    case fps_display_position::top_right:
-        valign = text_valign::top;
-        halign = text_halign::right;
-        break;
-    case fps_display_position::top_center:
-        valign = text_valign::top;
-        halign = text_halign::center;
-        break;
-    case fps_display_position::bottom_left:
-        valign = text_valign::bottom;
-        halign = text_halign::left;
-        break;
-    case fps_display_position::bottom_right:
-        valign = text_valign::bottom;
-        halign = text_halign::right;
-        break;
-    case fps_display_position::bottom_center:
-        valign = text_valign::bottom;
-        halign = text_halign::center;
-        break;
-    }
-
     // Render using bitmap font:
     bitmap_font->set_color(0xFFFFFFFF);
     bitmap_font->draw(
         std::format("FPS: {:.1f}", current_framerate),
         viewport,
-        valign,
-        halign
+        position
     );
 
     // Render using what graphics uses (SDL_ttf):
     /*
     graphics->set_color(0xFFFFFFFF);
     graphics->draw_text(
-        "fps_font", 21, 
-        std::format("FPS: {:.1f}", current_framerate), 
+        "fps_font", 21,
+        std::format("FPS: {:.1f}", current_framerate),
         viewport,
-        text_align::top_left
+        content_align::top_left
     );
     */
 }
@@ -128,12 +99,12 @@ void isometric::game::fps_display_module::set_update_interval(double interval)
     update_interval = interval;
 }
 
-fps_display_position fps_display_module::get_position() const
+content_align fps_display_module::get_position() const
 {
     return position;
 }
 
-void fps_display_module::set_position(fps_display_position position)
+void fps_display_module::set_position(content_align position)
 {
     this->position = position;
 }

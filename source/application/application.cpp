@@ -6,6 +6,7 @@
 
 using namespace isometric;
 using namespace isometric::assets;
+using namespace isometric::rendering;
 
 std::shared_ptr<application> application::this_app = nullptr;
 
@@ -51,11 +52,14 @@ bool application::start()
 {
     SDL_Log("Application [%s] starting", setup.name.c_str());
 
-    if (initialize()) {
-        if (!on_start()) {
+    if (initialize())
+    {
+        if (!on_start())
+        {
             SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, "Application's [%s] on_start returned false", setup.name.c_str());
         }
-        else {
+        else
+        {
             main_loop();
         }
     }
@@ -63,7 +67,8 @@ bool application::start()
     SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "Calling shutdown event");
     on_shutdown();
 
-    if (setup.broadcast_fps) {
+    if (setup.broadcast_fps)
+    {
         SDL_LogVerbose(SDL_LOG_CATEGORY_APPLICATION, "Minimum FPS: %.02f, Maximum FPS: %0.2f, Average FPS: %0.2f",
             current_fps.get_minimum(), current_fps.get_maximum(), current_fps.get_overall_average());
     }
@@ -92,7 +97,7 @@ bool application::start()
 
 void application::shutdown()
 {
-    SDL_LogVerbose(SDL_LOG_CATEGORY_APPLICATION, "application::shutdown called > should_exit before call = %s", 
+    SDL_LogVerbose(SDL_LOG_CATEGORY_APPLICATION, "application::shutdown called > should_exit before call = %s",
         should_exit ? "true" : "false");
 
     should_exit = true;
@@ -107,9 +112,12 @@ void application::main_loop()
     frame_stopwatch.start(true);
     fixed_frame_stopwatch.start(true);
 
-    while (!should_exit) {
-        while (SDL_PollEvent(&e)) {
-            if (!on_event(e)) {
+    while (!should_exit)
+    {
+        while (SDL_PollEvent(&e))
+        {
+            if (!on_event(e))
+            {
                 shutdown();
                 return;
             }
@@ -143,10 +151,11 @@ void application::broadcast_fps(double delta_time) const
     static double time_since_last_update = 0.0;
     time_since_last_update += delta_time;
 
-    if (time_since_last_update >= setup.broadcast_fps_elapsed /* seconds */) {
+    if (time_since_last_update >= setup.broadcast_fps_elapsed /* seconds */)
+    {
         time_since_last_update = 0.0;
 
-        SDL_LogVerbose(SDL_LOG_CATEGORY_APPLICATION, "Current FPS: %.02f, Current Fixed FPS: %0.2f", 
+        SDL_LogVerbose(SDL_LOG_CATEGORY_APPLICATION, "Current FPS: %.02f, Current Fixed FPS: %0.2f",
             current_fps.get(), current_fixed_fps.get());
 
         SDL_LogVerbose(SDL_LOG_CATEGORY_APPLICATION, "Average FPS: %.02f, Average Fixed FPS: %0.2f",
@@ -190,18 +199,21 @@ void application::try_call_fixed_update(double delta_time)
 
 void application::on_fixed_update(double fixed_delta_time)
 {
-    for (auto& m : modules) {
+    for (auto& m : modules)
+    {
         if (m && m->is_enabled()) m->on_fixed_update(fixed_delta_time);
     }
 }
 
 void application::on_update(double delta_time)
 {
-    for (auto& m : modules) {
+    for (auto& m : modules)
+    {
         if (m && m->is_enabled()) m->on_update(delta_time);
     }
 
-    for (auto& m : modules) {
+    for (auto& m : modules)
+    {
         if (m && m->is_enabled()) m->on_late_update(delta_time);
     }
 }
@@ -210,11 +222,13 @@ bool application::on_event(const SDL_Event& e)
 {
     static size_t mouse_motion = 0;
 
-    switch (e.type) {
+    switch (e.type)
+    {
     case SDL_QUIT:
         return false; // Returning false to end the game loop
     case SDL_KEYDOWN:
-        if (setup.shutdown_on_esc && e.key.keysym.scancode == SDL_SCANCODE_ESCAPE) {
+        if (setup.shutdown_on_esc && e.key.keysym.scancode == SDL_SCANCODE_ESCAPE)
+        {
             SDL_Log("Shutdown requested via escape key");
             return false; // Shutdown
         }
@@ -245,31 +259,35 @@ bool application::initialize()
     SDL_version sdlvn_built = {}, sdlvn_runtime = {};
     SDL_VERSION(&sdlvn_built);
     SDL_GetVersion(&sdlvn_runtime);
-    SDL_Log("Built with SDL version: %d.%d.%d, Using SDL runtime version: %d.%d.%d", 
-        sdlvn_built.major, sdlvn_built.minor, sdlvn_built.patch, 
+    SDL_Log("Built with SDL version: %d.%d.%d, Using SDL runtime version: %d.%d.%d",
+        sdlvn_built.major, sdlvn_built.minor, sdlvn_built.patch,
         sdlvn_runtime.major, sdlvn_runtime.minor, sdlvn_runtime.patch
     );
 
     std::stringstream error;
 
-    try {
+    try
+    {
         // --------------------------------------------------------------------
         // SDL & EXTENSIONS INIT
 
         SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "SDL initializing subsystems");
-        if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
+        if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
+        {
             error << "Failed to initialize SDL: " << SDL_GetError();
             throw(error.str());
         }
 
         SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "SDL_image initializing");
-        if (IMG_Init(IMG_INIT_PNG) == 0) {
+        if (IMG_Init(IMG_INIT_PNG) == 0)
+        {
             error << "Failed to initialize SDL_image: " << IMG_GetError();
             throw(error.str());
         }
 
         SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "SDL_ttf initializing");
-        if (TTF_Init() < 0) {
+        if (TTF_Init() < 0)
+        {
             error << "Failed to initialize SDL_ttf: " << TTF_GetError();
             throw(error.str());
         }
@@ -290,7 +308,8 @@ bool application::initialize()
             SDL_WINDOWPOS_CENTERED,
             setup.screen_width, setup.screen_height,
             0
-        )) == 0) {
+        )) == 0)
+        {
             error << "Failed to create a window: " << SDL_GetError();
             throw(error.str());
         }
@@ -300,13 +319,14 @@ bool application::initialize()
 
         SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "Creating SDL renderer");
         Uint32 renderer_flags = setup.vertical_sync ? SDL_RENDERER_PRESENTVSYNC : 0;
-        if ((renderer = SDL_CreateRenderer(window, -1, renderer_flags)) == 0) {
+        if ((renderer = SDL_CreateRenderer(window, -1, renderer_flags)) == 0)
+        {
             error << "Failed to create the renderer: " << SDL_GetError();
             throw(std::exception(error.str().c_str()));
         }
 
         this->asset_manager = std::shared_ptr<asset_management>(new asset_management(renderer));
-        this->graphics = std::shared_ptr<isometric::graphics>(new isometric::graphics(renderer));
+        this->graphics = std::shared_ptr<rendering::graphics>(new rendering::graphics(renderer));
 
     }
     catch (std::exception ex)
@@ -341,7 +361,7 @@ void application::register_module(std::shared_ptr<module> m)
     modules.push_back(m);
     m->app = application::this_app;
 
-    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "Module [%s] registered with application [%s]", 
+    SDL_LogDebug(SDL_LOG_CATEGORY_APPLICATION, "Module [%s] registered with application [%s]",
         m->name.c_str(), setup.name.c_str());
 
     m->on_registered();
@@ -362,7 +382,8 @@ void application::unregister_all_modules()
 {
     auto currente_modules = std::list<std::shared_ptr<module>>(modules.begin(), modules.end());
 
-    for (auto m : currente_modules) {
+    for (auto m : currente_modules)
+    {
         unregister_module(m);
     }
 }
