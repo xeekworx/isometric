@@ -41,11 +41,43 @@ simple_bitmap_font::~simple_bitmap_font()
     destroy();
 }
 
+uint32_t simple_bitmap_font::set_color(uint32_t color)
+{
+    auto pixel_format = SDL_AllocFormat(SDL_PIXELFORMAT_RGBA8888);
+
+    SDL_Color new_color{};
+    SDL_GetRGBA(
+        color, pixel_format,
+        &new_color.r,
+        &new_color.g,
+        &new_color.b,
+        &new_color.a
+    );
+
+    uint32_t old_color = get_color_as_hex();
+    set_color(new_color);
+
+    SDL_FreeFormat(pixel_format);
+
+    return old_color;
+}
+
 SDL_Color simple_bitmap_font::set_color(const SDL_Color& color)
 {
     SDL_Color old_color = current_color;
     current_color = color;
     return old_color;
+}
+
+const uint32_t simple_bitmap_font::get_color_as_hex() const
+{
+    SDL_Color color = get_color();
+
+    return
+        color.a +
+        (color.b << 8) +
+        (color.g << 16) +
+        (color.r << 24);
 }
 
 const SDL_Color& simple_bitmap_font::get_color() const
@@ -56,6 +88,12 @@ const SDL_Color& simple_bitmap_font::get_color() const
 void simple_bitmap_font::draw(const SDL_Point& point, const std::string& text) const
 {
     SDL_Rect dstrect = { point.x, 0, 0, 0 };
+
+    for (const auto& texture_info : font_info.textures) {
+        SDL_Texture* texture = std::get<0>(texture_info);
+        SDL_SetTextureColorMod(texture, current_color.r, current_color.g, current_color.b);
+        SDL_SetTextureAlphaMod(texture, current_color.a);
+    }
 
     for (char character : text) {
         if (!font_info.glyphs.contains(character)) continue;
@@ -253,6 +291,8 @@ static void generate_glyph_textures(
 
         if (surface) {
             texture = SDL_CreateTextureFromSurface(renderer, surface);
+            // For testing, output the glyph atlas as an image file. Don't forget to #include <SDL_image.h>
+            // IMG_SavePNG(surface, std::format("./simple_font.{}.png", texture_index).c_str());
             SDL_FreeSurface(surface);
             surface = nullptr;
         }

@@ -37,7 +37,9 @@ namespace isometric {
         simple_bitmap_font(SDL_Renderer* renderer, TTF_Font* font, const std::vector<char>& glyphs);
         virtual ~simple_bitmap_font();
 
+        uint32_t set_color(uint32_t color);
         SDL_Color set_color(const SDL_Color& color);
+        const uint32_t get_color_as_hex() const;
         const SDL_Color& get_color() const;
 
         void draw(const SDL_Point& point, const std::string& text) const;
