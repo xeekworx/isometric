@@ -14,7 +14,7 @@ namespace isometric::game {
     private:
         double update_interval = 0.5f;
         fps_display_position position = fps_display_position::top_right;
-        std::unique_ptr<simple_bitmap_font> bitmap_font;
+        std::unique_ptr<isometric::bitmap_font::simple_bitmap_font> bitmap_font;
 
     protected:
         void on_registered() override;

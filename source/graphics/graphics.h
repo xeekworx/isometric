@@ -33,8 +33,8 @@ namespace isometric {
         void clear(uint32_t color);
 
         SDL_FRect size_text(const std::string& font_name, int point_size, const std::string& text, const SDL_FPoint& point = SDL_FPoint{ 0,0 });
-        void draw_text(const std::string& font_name, int point_size, const std::string& text, const SDL_Point& point, unsigned align = text_align_top | text_align_left);
-        void draw_text(const std::string& font_name, int point_size, const std::string& text, const SDL_Rect& destination, unsigned align = text_align_top | text_align_left, bool wrap = false);
+        void draw_text(const std::string& font_name, int point_size, const std::string& text, const SDL_Point& point, text_align align = text_align::top_left);
+        void draw_text(const std::string& font_name, int point_size, const std::string& text, const SDL_Rect& destination, text_align align = text_align::top_left, bool wrap = false);
     };
 
 }

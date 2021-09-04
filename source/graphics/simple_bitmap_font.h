@@ -4,7 +4,7 @@
 #include <unordered_map>
 #include <vector>
 
-namespace isometric {
+namespace isometric::bitmap_font {
 
     struct glyph_info
     {
@@ -17,6 +17,9 @@ namespace isometric {
         std::vector<std::tuple<SDL_Texture*, SDL_Rect>> textures;
         std::unordered_map<char, glyph_info> glyphs;
     };
+
+    enum class text_halign { left, center, right, default_align = left };
+    enum class text_valign { top, center, bottom, default_align = top };
 
     class simple_bitmap_font
     {
@@ -32,9 +35,6 @@ namespace isometric {
         SDL_Color current_color = SDL_Color{ 255, 255, 255, 255 };
 
     public:
-        enum class text_halign { left, center, right };
-        enum class text_valign { top, center, bottom };
-
         simple_bitmap_font(SDL_Renderer* renderer, TTF_Font* font, unsigned char start_glyph, unsigned char end_glyph);
         simple_bitmap_font(SDL_Renderer* renderer, TTF_Font* font, const char* glyphs, size_t glyphs_size);
         simple_bitmap_font(SDL_Renderer* renderer, TTF_Font* font, const std::vector<char>& glyphs);

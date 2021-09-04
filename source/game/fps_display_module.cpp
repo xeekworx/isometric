@@ -7,6 +7,7 @@ using namespace isometric;
 using namespace isometric::game;
 using namespace isometric::assets;
 using namespace isometric::tools;
+using namespace isometric::bitmap_font;
 
 void fps_display_module::on_registered()
 {
@@ -62,43 +63,54 @@ void fps_display_module::on_late_update(double delta_time)
     viewport.w -= margin * 2;
     viewport.h -= margin * 2;
 
-    simple_bitmap_font::text_valign valign = simple_bitmap_font::text_valign::top;
-    simple_bitmap_font::text_halign halign = simple_bitmap_font::text_halign::left;
+    text_valign valign = text_valign::default_align;
+    text_halign halign = text_halign::default_align;
     switch (position) {
-    default:
     case fps_display_position::top_left:
-        valign = simple_bitmap_font::text_valign::top;
-        halign = simple_bitmap_font::text_halign::left;
+        valign = text_valign::top;
+        halign = text_halign::left;
         break;
     case fps_display_position::top_right:
-        valign = simple_bitmap_font::text_valign::top;
-        halign = simple_bitmap_font::text_halign::right;
+        valign = text_valign::top;
+        halign = text_halign::right;
         break;
     case fps_display_position::top_center:
-        valign = simple_bitmap_font::text_valign::top;
-        halign = simple_bitmap_font::text_halign::center;
+        valign = text_valign::top;
+        halign = text_halign::center;
         break;
     case fps_display_position::bottom_left:
-        valign = simple_bitmap_font::text_valign::bottom;
-        halign = simple_bitmap_font::text_halign::left;
+        valign = text_valign::bottom;
+        halign = text_halign::left;
         break;
     case fps_display_position::bottom_right:
-        valign = simple_bitmap_font::text_valign::bottom;
-        halign = simple_bitmap_font::text_halign::right;
+        valign = text_valign::bottom;
+        halign = text_halign::right;
         break;
     case fps_display_position::bottom_center:
-        valign = simple_bitmap_font::text_valign::bottom;
-        halign = simple_bitmap_font::text_halign::center;
+        valign = text_valign::bottom;
+        halign = text_halign::center;
         break;
     }
 
+    // Render using bitmap font:
     bitmap_font->set_color(0xFFFFFFFF);
-    bitmap_font->draw(std::format(
-        "FPS: {:.1f}", current_framerate),
+    bitmap_font->draw(
+        std::format("FPS: {:.1f}", current_framerate),
         viewport,
         valign,
         halign
     );
+
+    // Render using what graphics uses (SDL_ttf):
+    /*
+    graphics->set_color(0xFFFFFFFF);
+    graphics->draw_text(
+        "fps_font", 21, 
+        std::format("FPS: {:.1f}", current_framerate), 
+        viewport,
+        text_align::top_left
+    );
+    */
 }
 
 void fps_display_module::on_fixed_update(double fixed_delta_time)

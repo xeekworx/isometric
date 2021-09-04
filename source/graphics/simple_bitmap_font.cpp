@@ -3,7 +3,7 @@
 #include <vector>
 #include <tuple>
 
-using namespace isometric;
+using namespace isometric::bitmap_font;
 
 static void generate_glyph_surfaces(TTF_Font* font, const std::vector<char>& glyphs, bitmap_font_info& font_info);
 static void generate_glyph_srcrects(bitmap_font_info& font_info);

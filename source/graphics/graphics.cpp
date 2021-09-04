@@ -110,7 +110,7 @@ SDL_FRect graphics::size_text(const std::string& font_name, int point_size, cons
     return SDL_FRect{ point.x, point.y, static_cast<float>(width), static_cast<float>(height) };
 }
 
-void graphics::draw_text(const std::string& font_name, int point_size, const std::string& text, const SDL_Point& point, unsigned align)
+void graphics::draw_text(const std::string& font_name, int point_size, const std::string& text, const SDL_Point& point, text_align align)
 {
     auto& asset = (*this->asset_manager)[font_name];
     if (!asset) return;
@@ -134,17 +134,39 @@ void graphics::draw_text(const std::string& font_name, int point_size, const std
 
     SDL_Rect dest = SDL_Rect{ point.x, point.y, text_width, text_height };
 
-    if (align & text_align_center) dest.x += static_cast<int>(std::round(text_width / 2.0f));
-    else if (align & text_align_right) dest.x += text_width;
+    // Horizontal Alignment:
+    switch (align) {
+    case text_align::top_center:
+    case text_align::middle_center:
+    case text_align::bottom_center:
+        dest.x += static_cast<int>(std::round(text_width / 2.0f));
+        break;
+    case text_align::top_right:
+    case text_align::middle_right:
+    case text_align::bottom_right:
+        dest.x += text_width;
+        break;
+    }
     
-    if (align & text_align_vcenter) dest.y += static_cast<int>(std::round(text_height / 2.0f));
-    else if (align & text_align_bottom) dest.y += text_height;
+    // Vertical Alignment:
+    switch (align) {
+    case text_align::middle_left:
+    case text_align::middle_center:
+    case text_align::middle_right:
+        dest.y += static_cast<int>(std::round(text_height / 2.0f));
+        break;
+    case text_align::bottom_left:
+    case text_align::bottom_center:
+    case text_align::bottom_right:
+        dest.y += text_height;
+        break;
+    }
 
     SDL_RenderCopy(renderer, texture, NULL, &dest);
     SDL_DestroyTexture(texture);
 }
 
-void graphics::draw_text(const std::string& font_name, int point_size, const std::string& text, const SDL_Rect& destination, unsigned align, bool wrap)
+void graphics::draw_text(const std::string& font_name, int point_size, const std::string& text, const SDL_Rect& destination, text_align align, bool wrap)
 {
     auto& asset = (*this->asset_manager)[font_name];
     if (!asset) return;
@@ -173,11 +195,33 @@ void graphics::draw_text(const std::string& font_name, int point_size, const std
 
     SDL_Rect real_dest = SDL_Rect{ destination.x, destination.y, text_width, text_height };
 
-    if (align & text_align_center) real_dest.x += destination.w / 2 - text_width / 2;
-    else if (align & text_align_right) real_dest.x += destination.w - text_width;
+    // Horizontal Alignment:
+    switch (align) {
+    case text_align::top_center:
+    case text_align::middle_center:
+    case text_align::bottom_center:
+        real_dest.x += static_cast<int>(std::round(destination.w / 2.0 - text_width / 2.0));
+        break;
+    case text_align::top_right:
+    case text_align::middle_right:
+    case text_align::bottom_right:
+        real_dest.x += destination.w - text_width;
+        break;
+    }
 
-    if (align & text_align_vcenter) real_dest.y += destination.h / 2 - text_height / 2;
-    else if (align & text_align_bottom) real_dest.y += destination.h - text_height;
+    // Vertical Alignment:
+    switch (align) {
+    case text_align::middle_left:
+    case text_align::middle_center:
+    case text_align::middle_right:
+        real_dest.y += static_cast<int>(std::round(destination.h / 2.0 - text_height / 2.0));
+        break;
+    case text_align::bottom_left:
+    case text_align::bottom_center:
+    case text_align::bottom_right:
+        real_dest.y += destination.h - text_height;
+        break;
+    }
 
     SDL_Color sdl_color = get_sdl_color();
     SDL_SetTextureColorMod(texture, sdl_color.r, sdl_color.g, sdl_color.b);
