@@ -32,6 +32,9 @@ namespace isometric {
         SDL_Color current_color = SDL_Color{ 255, 255, 255, 255 };
 
     public:
+        enum class text_halign { left, center, right };
+        enum class text_valign { top, center, bottom };
+
         simple_bitmap_font(SDL_Renderer* renderer, TTF_Font* font, unsigned char start_glyph, unsigned char end_glyph);
         simple_bitmap_font(SDL_Renderer* renderer, TTF_Font* font, const char* glyphs, size_t glyphs_size);
         simple_bitmap_font(SDL_Renderer* renderer, TTF_Font* font, const std::vector<char>& glyphs);
@@ -42,8 +45,23 @@ namespace isometric {
         const uint32_t get_color_as_hex() const;
         const SDL_Color& get_color() const;
 
-        void draw(const SDL_Point& point, const std::string& text) const;
-        int measure(const std::string& text) const;
+        void draw(
+            const std::string& text,
+            const SDL_Point& point
+        ) const;
+
+        void draw(
+            const std::string& text,
+            const SDL_Rect& dstrect,
+            text_valign valign = text_valign::top,
+            text_halign halign = text_halign::left,
+            bool no_clip = true
+        ) const;
+
+        SDL_Rect measure(
+            const std::string& text,
+            const SDL_Point& point = SDL_Point{ 0, 0 }
+        ) const;
 
     private:
         void create(const std::vector<char>& glyphs);

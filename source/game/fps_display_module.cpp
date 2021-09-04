@@ -14,7 +14,12 @@ void fps_display_module::on_registered()
     auto fps_font = font::load("fps_font", "content/roboto/RobotoMono-Bold.ttf", std::vector<int>{ 16, 21, 32 });
 
     std::vector<char> glyphs = { 'F', 'P', 'S', ':', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.', ' ', '\t' };
-    bitmap_font = std::make_unique<simple_bitmap_font>(application::get_app()->get_graphics()->get_renderer(), fps_font->get_font(21), glyphs.data(), glyphs.size());
+
+    bitmap_font = std::make_unique<simple_bitmap_font>(
+        application::get_app()->get_graphics()->get_renderer(),
+        fps_font->get_font(21),
+        glyphs.data(), glyphs.size()
+    );
 
     asset_mgr->register_asset(std::move(fps_font));
 }
@@ -60,7 +65,13 @@ void fps_display_module::on_late_update(double delta_time)
     graphics->set_color(0xFFFFFFFF);
 
     bitmap_font->set_color(0xFFFFFFFF);
-    bitmap_font->draw(SDL_Point{ margin, margin }, std::format("FPS: {:.1f}", current_framerate));
+    //bitmap_font->draw(std::format("FPS: {:.1f}", current_framerate), SDL_Point{ margin, margin });
+    bitmap_font->draw(std::format(
+        "FPS: {:.1f}", current_framerate),
+        viewport,
+        simple_bitmap_font::text_valign::top,
+        simple_bitmap_font::text_halign::right
+    );
 }
 
 void fps_display_module::on_fixed_update(double fixed_delta_time)

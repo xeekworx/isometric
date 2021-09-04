@@ -1,6 +1,5 @@
 #include "simple_bitmap_font.h"
 #include <SDL_ttf.h>
-#include <format>
 #include <vector>
 #include <tuple>
 
@@ -85,47 +84,95 @@ const SDL_Color& simple_bitmap_font::get_color() const
     return current_color;
 }
 
-void simple_bitmap_font::draw(const SDL_Point& point, const std::string& text) const
+void simple_bitmap_font::draw(const std::string& text, const SDL_Point& point) const
 {
-    SDL_Rect dstrect = { point.x, 0, 0, 0 };
+    SDL_Rect dstrect = { point.x, point.y, 0, 0 };
+    draw(text, dstrect);
+}
 
+void simple_bitmap_font::draw(
+    const std::string& text,
+    const SDL_Rect& dstrect,
+    text_valign valign,
+    text_halign halign,
+    bool no_clip
+) const
+{
     for (const auto& texture_info : font_info.textures) {
         SDL_Texture* texture = std::get<0>(texture_info);
         SDL_SetTextureColorMod(texture, current_color.r, current_color.g, current_color.b);
         SDL_SetTextureAlphaMod(texture, current_color.a);
     }
 
+    SDL_Rect measured_rect{};
+    // No point in measuring unless the alignment requires it
+    if (halign != text_halign::left || valign != text_valign::top) {
+        measured_rect = measure(text, SDL_Point{ dstrect.x, dstrect.y });
+    }
+
+    // To keep up with the current glyph drawing position:
+    SDL_Rect glyph_dstrect{ dstrect.x, dstrect.y };
+
+    // Adjust the starting glyph drawing position if alignment requires it:
+    switch (halign) {
+    case text_halign::center:
+        glyph_dstrect.x = dstrect.x + static_cast<int>(dstrect.w / 2.0f - measured_rect.w / 2.0f);
+        break;
+    case text_halign::right:
+        glyph_dstrect.x = dstrect.x + dstrect.w - measured_rect.w - 1;
+        break;
+    }
+    switch (valign) {
+    case text_valign::center:
+        glyph_dstrect.y = dstrect.y + static_cast<int>(dstrect.h / 2.0f - measured_rect.h / 2.0f);
+        break;
+    case text_valign::bottom:
+        glyph_dstrect.y = dstrect.y + dstrect.h - measured_rect.h - 1;
+        break;
+    }
+
+    // Text rendering:
     for (char character : text) {
         if (!font_info.glyphs.contains(character)) continue;
 
         const auto& info = font_info.glyphs.at(character);
-        dstrect = { dstrect.x, point.y, info.srcrect.w, info.srcrect.h };
+        glyph_dstrect = { glyph_dstrect.x, glyph_dstrect.y, info.srcrect.w, info.srcrect.h };
+
+        if (!no_clip && !SDL_HasIntersection(&glyph_dstrect, &dstrect)) {
+            break;
+        }
 
         if (info.texture_index < font_info.textures.size())
         {
             SDL_Texture* texture = std::get<0>(font_info.textures[info.texture_index]);
             if (texture) {
-                SDL_RenderCopy(renderer, texture, &info.srcrect, &dstrect);
+                SDL_RenderCopy(renderer, texture, &info.srcrect, &glyph_dstrect);
             }
         }
 
-        dstrect.x += info.srcrect.w;
+        glyph_dstrect.x += info.srcrect.w;
     }
 }
 
-int simple_bitmap_font::measure(const std::string& text) const
+SDL_Rect simple_bitmap_font::measure(
+    const std::string& text,
+    const SDL_Point& point
+) const
 {
-    int width = 0;
+    int width = 0, height = 0;
 
     for (char character : text) {
         if (font_info.glyphs.contains(character))
         {
             const auto& info = font_info.glyphs.at(character);
             width += info.srcrect.w;
+            if (info.srcrect.h > height) {
+                height = info.srcrect.h;
+            }
         }
     }
 
-    return width;
+    return SDL_Rect{ point.x, point.y, width, height };
 }
 
 void simple_bitmap_font::create(const std::vector<char>& glyphs)
