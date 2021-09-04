@@ -92,7 +92,46 @@ void simple_bitmap_font::draw(
 ) const
 {
     SDL_Rect dstrect = { point.x, point.y, 0, 0 };
-    draw(text, dstrect);
+
+    if (align != content_align::top_left)
+    {
+        auto measured_rect = measure(text, SDL_Point{ dstrect.x, dstrect.y });
+
+        // The alignment has to be handled here since it works differntly than when using the dstrect version of this
+        // function.
+
+        // Horizontal Alignment:
+        switch (align)
+        {
+        case content_align::top_center:
+        case content_align::middle_center:
+        case content_align::bottom_center:
+            dstrect.x -= static_cast<int>(std::round(measured_rect.w / 2.0));
+            break;
+        case content_align::top_right:
+        case content_align::middle_right:
+        case content_align::bottom_right:
+            dstrect.x -= measured_rect.w;
+            break;
+        }
+
+        // Vertical Alignment:
+        switch (align)
+        {
+        case content_align::middle_left:
+        case content_align::middle_center:
+        case content_align::middle_right:
+            dstrect.y -= static_cast<int>(std::round(measured_rect.h / 2.0));
+            break;
+        case content_align::bottom_left:
+        case content_align::bottom_center:
+        case content_align::bottom_right:
+            dstrect.y -= measured_rect.h;
+            break;
+        }
+    }
+
+    draw(text, dstrect, content_align::top_left, true);
 }
 
 void simple_bitmap_font::draw(
@@ -109,44 +148,42 @@ void simple_bitmap_font::draw(
         SDL_SetTextureAlphaMod(texture, current_color.a);
     }
 
-    SDL_Rect measured_rect{};
-    // No point in measuring unless the alignment requires it
-    if (align != content_align::top_left)
-    {
-        measured_rect = measure(text, SDL_Point{ dstrect.x, dstrect.y });
-    }
-
     // To keep up with the current glyph drawing position:
     SDL_Rect glyph_dstrect{ dstrect.x, dstrect.y };
 
-    // Horizontal Alignment:
-    switch (align)
+    if (align != content_align::top_left)
     {
-    case content_align::top_center:
-    case content_align::middle_center:
-    case content_align::bottom_center:
-        glyph_dstrect.x += static_cast<int>(std::round(dstrect.w / 2.0 - measured_rect.w / 2.0));
-        break;
-    case content_align::top_right:
-    case content_align::middle_right:
-    case content_align::bottom_right:
-        glyph_dstrect.x += dstrect.w - measured_rect.w;
-        break;
-    }
+        auto measured_rect = measure(text, SDL_Point{ dstrect.x, dstrect.y });
 
-    // Vertical Alignment:
-    switch (align)
-    {
-    case content_align::middle_left:
-    case content_align::middle_center:
-    case content_align::middle_right:
-        glyph_dstrect.y += static_cast<int>(std::round(dstrect.h / 2.0 - measured_rect.h / 2.0));
-        break;
-    case content_align::bottom_left:
-    case content_align::bottom_center:
-    case content_align::bottom_right:
-        glyph_dstrect.y += dstrect.h - measured_rect.h;
-        break;
+        // Horizontal Alignment:
+        switch (align)
+        {
+        case content_align::top_center:
+        case content_align::middle_center:
+        case content_align::bottom_center:
+            glyph_dstrect.x += static_cast<int>(std::round(dstrect.w / 2.0 - measured_rect.w / 2.0));
+            break;
+        case content_align::top_right:
+        case content_align::middle_right:
+        case content_align::bottom_right:
+            glyph_dstrect.x += dstrect.w - measured_rect.w;
+            break;
+        }
+
+        // Vertical Alignment:
+        switch (align)
+        {
+        case content_align::middle_left:
+        case content_align::middle_center:
+        case content_align::middle_right:
+            glyph_dstrect.y += static_cast<int>(std::round(dstrect.h / 2.0 - measured_rect.h / 2.0));
+            break;
+        case content_align::bottom_left:
+        case content_align::bottom_center:
+        case content_align::bottom_right:
+            glyph_dstrect.y += dstrect.h - measured_rect.h;
+            break;
+        }
     }
 
     // Text rendering:
@@ -286,7 +323,7 @@ static void generate_glyph_srcrects(
                 std::make_tuple<SDL_Texture*, SDL_Rect>(
                     nullptr,
                     SDL_Rect{ 0, 0, texture_width, texture_height }
-                    )
+                )
             );
 
             texture_index++;
@@ -312,7 +349,7 @@ static void generate_glyph_srcrects(
             std::make_tuple<SDL_Texture*, SDL_Rect>(
                 nullptr,
                 SDL_Rect{ 0, 0, texture_width, texture_height }
-                )
+            )
         );
     }
 }
