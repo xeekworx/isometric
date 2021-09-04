@@ -89,6 +89,9 @@
     <ClCompile Include="source\rendering\graphics.cpp">
       <Filter>Rendering</Filter>
     </ClCompile>
+    <ClCompile Include="source\assets\image_atlas.cpp">
+      <Filter>Asset Management</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -179,6 +182,9 @@
     </ClInclude>
     <ClInclude Include="source\rendering\graphics.h">
       <Filter>Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="source\assets\image_atlas.h">
+      <Filter>Asset Management</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -13,12 +13,12 @@ void fps_display_module::on_registered()
     auto asset_mgr = application::get_app()->get_asset_manager();
     auto fps_font = font::load("fps_font", "content/roboto/RobotoMono-Bold.ttf", std::vector<int>{ 16, 21, 32 });
 
-    std::vector<char> glyphs = { 'F', 'P', 'S', ':', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.', ' ', '\t' };
+    //std::vector<char> glyphs = { 'F', 'P', 'S', ':', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.', ' ', '\t' };
 
     bitmap_font = std::make_unique<simple_bitmap_font>(
         application::get_app()->get_renderer(),
-        fps_font->get_font(21),
-        glyphs.data(), glyphs.size()
+        fps_font->get_font(16),
+        0, 255
     );
 
     asset_mgr->register_asset(std::move(fps_font));
@@ -43,6 +43,7 @@ void fps_display_module::on_update(double delta_time)
 
 void fps_display_module::on_late_update(double delta_time)
 {
+    static double last_delta_time = delta_time;
     SDL_Rect viewport = application::get_app()->get_viewport();
     auto graphics = application::get_app()->get_graphics();
     const auto& framerate = application::get_app()->get_framerate();
@@ -56,6 +57,7 @@ void fps_display_module::on_late_update(double delta_time)
     {
         elapsed_since_last_update = 0.0;
         current_framerate = framerate.get();
+        last_delta_time = delta_time;
     }
 
     constexpr int margin = 6;
@@ -67,7 +69,7 @@ void fps_display_module::on_late_update(double delta_time)
     // Render using bitmap font:
     bitmap_font->set_color(0xFFFFFFFF);
     bitmap_font->draw(
-        std::format("FPS: {:.1f}", current_framerate),
+        std::format("FPS: {:.1f} | DELTA: {:.2f}ms", current_framerate, last_delta_time * 1000.0),
         viewport,
         position
     );
@@ -76,7 +78,7 @@ void fps_display_module::on_late_update(double delta_time)
     /*
     graphics->set_color(0xFFFFFFFF);
     graphics->draw_text(
-        "fps_font", 21,
+        "fps_font", 16,
         std::format("FPS: {:.1f}", current_framerate),
         viewport,
         content_align::top_left

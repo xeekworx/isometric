@@ -1,14 +1,43 @@
 #include <SDL.h>
 #include <SDL_image.h>
+#include <format>
 #include "image.h"
 #include "../source/application/application.h"
 
 using namespace isometric::assets;
 
-image::image(const std::string& name, SDL_Texture* sdl_texture, SDL_Surface* sdl_surface)
-    : asset(name), texture(sdl_texture), surface(sdl_surface)
+image::image(const std::string& name, const std::string& path)
+    : asset(name)
 {
+    if (!application::get_app() || !application::get_app()->is_initialized())
+    {
+        auto error_msg = std::string("Attempted to load image before an application object has been created and initialized");
+        throw std::exception(error_msg.c_str());
+    }
 
+    SDL_Surface* surface = IMG_Load(path.c_str());
+    if (surface == NULL)
+    {
+        auto error_msg = std::format("Failed to load surface for image [{}] from '{}'", name, path);
+        throw std::exception(error_msg.c_str());
+    }
+
+    SDL_Texture* texture = SDL_CreateTextureFromSurface(
+        application::get_app()->get_graphics()->get_renderer(),
+        surface
+    );
+
+    if (texture == NULL)
+    {
+        SDL_FreeSurface(surface);
+        surface = nullptr;
+
+        auto error_msg = std::format("Failed to create texture for image [{}] from '{}'", name, path);
+        throw std::exception(error_msg.c_str());
+    }
+
+    this->texture = texture;
+    this->surface = surface;
 }
 
 image::~image()
@@ -33,33 +62,15 @@ void isometric::assets::image::clear()
 
 std::unique_ptr<image> image::load(const std::string& name, const std::string& path)
 {
-    if (!application::get_app() || !application::get_app()->is_initialized())
+    try
     {
-        auto error_msg = std::string("Attempted to load image before an application object has been created and initialized");
-        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, error_msg.c_str());
-        throw std::exception(error_msg.c_str());
+        return std::move(std::unique_ptr<image>(new image(name, path)));
     }
-
-    SDL_Surface* surface = IMG_Load(path.c_str());
-    if (surface == NULL)
+    catch (std::exception ex)
     {
-        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Failed to load surface for image [%s] from '%s'", name.c_str(), path.c_str());
+        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, ex.what());
         return nullptr;
     }
-
-    SDL_Texture* texture = SDL_CreateTextureFromSurface(
-        application::get_app()->get_graphics()->get_renderer(),
-        surface
-    );
-    if (texture == NULL)
-    {
-        SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Failed to create texture for image [%s] from '%s'", name.c_str(), path.c_str());
-        SDL_FreeSurface(surface);
-        surface = nullptr;
-        return nullptr;
-    }
-
-    return std::move(std::unique_ptr<image>(new image(name, texture, surface)));
 }
 
 SDL_Texture* image::get_texture() const

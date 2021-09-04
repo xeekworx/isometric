@@ -163,6 +163,7 @@
     <ClCompile Include="source\assets\asset_management.cpp" />
     <ClCompile Include="source\assets\font.cpp" />
     <ClCompile Include="source\assets\image.cpp" />
+    <ClCompile Include="source\assets\image_atlas.cpp" />
     <ClCompile Include="source\core\camera.cpp" />
     <ClCompile Include="source\core\game_object.cpp" />
     <ClCompile Include="source\core\input.cpp" />
@@ -197,6 +198,7 @@
     <ClInclude Include="source\assets\asset_management.h" />
     <ClInclude Include="source\assets\font.h" />
     <ClInclude Include="source\assets\image.h" />
+    <ClInclude Include="source\assets\image_atlas.h" />
     <ClInclude Include="source\core\camera.h" />
     <ClInclude Include="source\core\game_object.h" />
     <ClInclude Include="source\core\input.h" />
