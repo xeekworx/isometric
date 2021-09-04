@@ -8,7 +8,7 @@ namespace isometric::game {
     class fps_display_module : public isometric::module
     {
     private:
-        //std::unique_ptr<simple_bitmap_font> bitmap_font;
+        std::unique_ptr<simple_bitmap_font> bitmap_font;
         std::unordered_map<char, SDL_Rect> glyph_source_rects;
         SDL_Texture* glyphs_texture = nullptr;
 

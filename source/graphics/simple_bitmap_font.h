@@ -41,7 +41,7 @@ namespace isometric {
         const SDL_Color& get_color() const;
 
         void draw(const SDL_Point& point, const std::string& text) const;
-        void measure(const std::string& text) const;
+        int measure(const std::string& text) const;
 
     private:
         void create(const std::vector<char>& glyphs);

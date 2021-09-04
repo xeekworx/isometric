@@ -11,12 +11,12 @@ using namespace isometric::tools;
 void fps_display_module::on_registered()
 {
     auto asset_mgr = application::get_app()->get_asset_manager();
-    auto fps_font = font::load("fps_font", "content/roboto/RobotoMono-Bold.ttf", std::vector<int>{ 16, 24, 32, 48, 200 });
+    auto fps_font = font::load("fps_font", "content/roboto/RobotoMono-Bold.ttf", std::vector<int>{ 16, 21, 32, 48, 200 });
 
     std::vector<char> glyphs = { 'F', 'P', 'S', ':', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.' };
     std::unordered_map<char, SDL_Surface*> surfaces;
 
-    //bitmap_font = std::make_unique<simple_bitmap_font>(application::get_app()->get_graphics()->get_renderer(), fps_font->get_font(100), glyphs.data(), glyphs.size());
+    bitmap_font = std::make_unique<simple_bitmap_font>(application::get_app()->get_graphics()->get_renderer(), fps_font->get_font(21), glyphs.data(), glyphs.size());
     //bitmap_font = std::make_unique<simple_bitmap_font>(application::get_app()->get_graphics()->get_renderer(), fps_font->get_font(200), 0, 255);
 
     int x = 0, y = 0, overall_width = 0, overall_height = 0;
@@ -71,7 +71,7 @@ void fps_display_module::on_registered()
 
 void fps_display_module::on_unregister()
 {
-    //if (bitmap_font) bitmap_font.reset();
+    if (bitmap_font) bitmap_font.reset();
 
     auto app = application::get_app();
     if (app) {
@@ -129,7 +129,9 @@ void fps_display_module::on_late_update(double delta_time)
 
     graphics->set_color(0xFFFFFFFF);
     //graphics->draw_text("fps_font", 100, std::format("FPS: {:.1f}", current_framerate), viewport, text_align_top | text_align_right);
-    draw_fps(graphics->get_renderer(), glyphs_texture, glyph_source_rects, SDL_Point{ 6, 6 }, std::format("FPS: {:.1f}", current_framerate));
+    //draw_fps(graphics->get_renderer(), glyphs_texture, glyph_source_rects, SDL_Point{ 6, 6 }, std::format("FPS: {:.1f}", current_framerate));
+
+    bitmap_font->draw(SDL_Point{ margin, margin }, std::format("FPS: {:.1f}", current_framerate));
 }
 
 void fps_display_module::on_fixed_update(double fixed_delta_time)

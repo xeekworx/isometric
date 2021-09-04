@@ -55,12 +55,39 @@ const SDL_Color& simple_bitmap_font::get_color() const
 
 void simple_bitmap_font::draw(const SDL_Point& point, const std::string& text) const
 {
+    SDL_Rect dstrect = { point.x, 0, 0, 0 };
 
+    for (char character : text) {
+        if (!font_info.glyphs.contains(character)) continue;
+
+        const auto& info = font_info.glyphs.at(character);
+        dstrect = { dstrect.x, point.y, info.srcrect.w, info.srcrect.h };
+
+        if (info.texture_index < font_info.textures.size())
+        {
+            SDL_Texture* texture = std::get<0>(font_info.textures[info.texture_index]);
+            if (texture) {
+                SDL_RenderCopy(renderer, texture, &info.srcrect, &dstrect);
+            }
+        }
+
+        dstrect.x += info.srcrect.w;
+    }
 }
 
-void simple_bitmap_font::measure(const std::string& text) const
+int simple_bitmap_font::measure(const std::string& text) const
 {
+    int width = 0;
 
+    for (char character : text) {
+        if (font_info.glyphs.contains(character))
+        {
+            const auto& info = font_info.glyphs.at(character);
+            width += info.srcrect.w;
+        }
+    }
+
+    return width;
 }
 
 void simple_bitmap_font::create(const std::vector<char>& glyphs)
@@ -180,7 +207,8 @@ static void generate_glyph_textures(
 )
 {
     std::vector<SDL_Surface*> atlas_surfaces;
-    for (auto& texture_info : font_info.textures) {
+    for (auto& texture_info : font_info.textures)
+    {
         const SDL_Rect& dimensions = std::get<1>(texture_info);
 
         SDL_Surface* atlas_surface = SDL_CreateRGBSurface(0, dimensions.w, dimensions.h, 32,
@@ -194,10 +222,12 @@ static void generate_glyph_textures(
         atlas_surfaces.push_back(atlas_surface);
     }
 
-    for (auto& pair : font_info.glyphs) {
+    for (auto& pair : font_info.glyphs)
+    {
         char character = pair.first;
         glyph_info& glyph = pair.second;
         const size_t texture_index = glyph.texture_index;
+
         // This is the dstrect in this context, since the destination 
         // surface will be the source in the future
         SDL_Rect dstrect = glyph.srcrect;
@@ -205,6 +235,9 @@ static void generate_glyph_textures(
         SDL_Surface* dst = atlas_surfaces[texture_index];
         if (dst && glyph.surface)
         {
+            // Disable blending for the glyph surface because if blending is enabled, black will bleed through the 
+            // anti-aliasing even though it's 0,0,0,0
+            SDL_SetSurfaceBlendMode(glyph.surface, SDL_BLENDMODE_NONE);
             SDL_BlitSurface(glyph.surface, &srcrect, dst, &dstrect);
             if (free_glyph_surfaces) {
                 SDL_FreeSurface(glyph.surface);
@@ -213,7 +246,8 @@ static void generate_glyph_textures(
         }
     }
 
-    for (size_t texture_index = 0; texture_index < font_info.textures.size(); texture_index++) {
+    for (size_t texture_index = 0; texture_index < font_info.textures.size(); texture_index++)
+    {
         auto& texture = std::get<0>(font_info.textures[texture_index]);
         auto& surface = atlas_surfaces[texture_index];
 
