@@ -52,6 +52,7 @@ namespace isometric {
         const application_setup& get_setup() const;
         SDL_Rect get_viewport() const;
         SDL_FRect get_viewportf() const;
+        SDL_Renderer* get_renderer() const;
         std::shared_ptr<isometric::graphics> get_graphics() const;
         std::shared_ptr<isometric::assets::asset_management> get_asset_manager() const;
         const tools::framerate& get_framerate() const { return current_fps; }
