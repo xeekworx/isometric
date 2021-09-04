@@ -19,7 +19,8 @@ bool graphics::has_sanity() const
 {
     bool sanity = renderer && pixel_format;
 
-    if (!sanity) {
+    if (!sanity)
+    {
         SDL_LogWarn(SDL_LOG_CATEGORY_APPLICATION, "graphics lacks sanity (missing renderer and/or pixel format)");
     }
 
@@ -134,7 +135,8 @@ void graphics::draw_text(
     int text_width = font_surface->w;
     int text_height = font_surface->h;
 
-    if (font_surface) {
+    if (font_surface)
+    {
         texture = SDL_CreateTextureFromSurface(renderer, font_surface);
         SDL_FreeSurface(font_surface);
     }
@@ -144,7 +146,8 @@ void graphics::draw_text(
     SDL_Rect dest = SDL_Rect{ point.x, point.y, text_width, text_height };
 
     // Horizontal Alignment:
-    switch (align) {
+    switch (align)
+    {
     case content_align::top_center:
     case content_align::middle_center:
     case content_align::bottom_center:
@@ -156,9 +159,10 @@ void graphics::draw_text(
         dest.x += text_width;
         break;
     }
-    
+
     // Vertical Alignment:
-    switch (align) {
+    switch (align)
+    {
     case content_align::middle_left:
     case content_align::middle_center:
     case content_align::middle_right:
@@ -191,17 +195,20 @@ void graphics::draw_text(
     SDL_Texture* texture = nullptr;
     SDL_Surface* font_surface = nullptr;
 
-    if (wrap) {
+    if (wrap)
+    {
         font_surface = TTF_RenderUTF8_Blended_Wrapped(font->get_font(point_size), text.c_str(), SDL_Color{ 255, 255, 255, 255 }, destination.w);
     }
-    else {
+    else
+    {
         font_surface = TTF_RenderUTF8_Blended(font->get_font(point_size), text.c_str(), SDL_Color{ 255, 255, 255, 255 });
     }
 
     int text_width = font_surface->w;
     int text_height = font_surface->h;
 
-    if (font_surface) {
+    if (font_surface)
+    {
         texture = SDL_CreateTextureFromSurface(renderer, font_surface);
         SDL_FreeSurface(font_surface);
     }
@@ -211,7 +218,8 @@ void graphics::draw_text(
     SDL_Rect real_dest = SDL_Rect{ destination.x, destination.y, text_width, text_height };
 
     // Horizontal Alignment:
-    switch (align) {
+    switch (align)
+    {
     case content_align::top_center:
     case content_align::middle_center:
     case content_align::bottom_center:
@@ -225,7 +233,8 @@ void graphics::draw_text(
     }
 
     // Vertical Alignment:
-    switch (align) {
+    switch (align)
+    {
     case content_align::middle_left:
     case content_align::middle_center:
     case content_align::middle_right:
